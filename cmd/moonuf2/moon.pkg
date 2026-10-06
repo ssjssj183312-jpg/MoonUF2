@@ -1,0 +1,14 @@
+pkgtype(kind: "executable")
+
+supported_targets = "js"
+
+import {
+  "ssjssj183312-jpg/moonuf2" @uf2,
+  "ssjssj183312-jpg/moonuf2/adapter" @adapter,
+}
+
+options(
+  link: {
+    "js": { "format": "cjs" },
+  },
+)

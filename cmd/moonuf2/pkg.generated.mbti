@@ -1,0 +1,15 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "ssjssj183312-jpg/moonuf2/cmd/moonuf2"
+
+// Values
+
+// Errors
+
+// Types and methods
+type Config
+
+type ReadResult
+
+// Type aliases
+
+// Traits
