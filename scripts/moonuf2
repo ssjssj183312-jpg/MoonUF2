@@ -1,0 +1,8 @@
+#!/bin/sh
+# 编译真实的 MoonBit 命令行程序，然后在调用者的工作目录中交给 Node 执行。
+set -eu
+ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+MOON=${MOON:-moon}
+NODE=${NODE:-node}
+(cd "$ROOT" && "$MOON" build --target js cmd/moonuf2 --quiet)
+exec "$NODE" "$ROOT/_build/js/debug/build/cmd/moonuf2/moonuf2.js" "$@"
