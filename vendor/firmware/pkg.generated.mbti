@@ -1,0 +1,205 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "ssjssj183312-jpg/moonuf2/vendor/firmware"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn checksum_sum(Bytes) -> Int
+
+pub fn decode_hex_bytes(String, line_index? : Int) -> Result[Bytes, FirmwareError]
+
+pub fn encode_hex_bytes(Bytes) -> String
+
+pub fn ones_complement_checksum(Bytes) -> Byte
+
+pub fn ones_complement_valid(Bytes) -> Bool
+
+pub fn parse_intel_hex_document(String) -> Result[IntelHexDocument, FirmwareError]
+
+pub fn parse_intel_hex_record(String, line_index? : Int) -> Result[IntelHexRecord, FirmwareError]
+
+pub fn parse_srecord(String, line_index? : Int) -> Result[SRecord, FirmwareError]
+
+pub fn parse_srecord_document(String) -> Result[SRecordDocument, FirmwareError]
+
+pub fn twos_complement_checksum(Bytes) -> Byte
+
+pub fn twos_complement_valid(Bytes) -> Bool
+
+// Errors
+
+// Types and methods
+pub(all) struct AddressGap {
+  start_value : UInt64
+  end_exclusive_value : UInt64
+} derive(Eq, @debug.Debug)
+pub fn AddressGap::end_exclusive(Self) -> UInt64
+pub fn AddressGap::length(Self) -> UInt64
+pub fn AddressGap::start(Self) -> UInt64
+
+pub struct FirmwareChunk {
+  address_value : UInt64
+  data_value : Bytes
+  line_index_value : Int
+} derive(Eq, @debug.Debug)
+pub fn FirmwareChunk::address(Self) -> UInt64
+pub fn FirmwareChunk::create(UInt64, Bytes, line_index? : Int) -> Result[Self, FirmwareError]
+pub fn FirmwareChunk::data(Self) -> Bytes
+pub fn FirmwareChunk::end_exclusive(Self) -> UInt64
+pub fn FirmwareChunk::length(Self) -> Int
+pub fn FirmwareChunk::line_index(Self) -> Int
+
+pub struct FirmwareError {
+  code_value : String
+  message_value : String
+  position_value : SourcePosition
+} derive(Eq, @debug.Debug)
+pub fn FirmwareError::code(Self) -> String
+pub fn FirmwareError::column_index(Self) -> Int?
+pub fn FirmwareError::line_index(Self) -> Int
+pub fn FirmwareError::message(Self) -> String
+pub fn FirmwareError::new(FirmwareErrorCode, String, SourcePosition) -> Self
+pub fn FirmwareError::position(Self) -> SourcePosition
+
+pub(all) enum FirmwareErrorCode {
+  HexOddLength
+  HexInvalidDigit
+  RecordEmpty
+  RecordInvalidPrefix
+  RecordInvalidType
+  RecordLengthMismatch
+  RecordTooLong
+  ChecksumMismatch
+  AddressOutOfRange
+  ImageOverlap
+  ImageInvalidRange
+  IntegrityViolation
+  DocumentMissingTerminator
+  DocumentRecordAfterTerminator
+  DocumentDuplicateMetadata
+} derive(Eq, @debug.Debug)
+pub fn FirmwareErrorCode::code(Self) -> String
+
+pub struct FirmwareImage {
+  segment_values : Array[ImageSegment]
+  entry_point_value : UInt64?
+} derive(Eq, @debug.Debug)
+pub fn FirmwareImage::byte_at(Self, UInt64) -> Byte?
+pub fn FirmwareImage::entry_point(Self) -> UInt64?
+pub fn FirmwareImage::from_chunks(Array[FirmwareChunk], policy? : OverlapPolicy, entry_point? : UInt64?) -> Result[Self, FirmwareError]
+pub fn FirmwareImage::from_intel_document(IntelHexDocument, policy? : OverlapPolicy) -> Result[Self, FirmwareError]
+pub fn FirmwareImage::from_srecord_document(SRecordDocument, policy? : OverlapPolicy) -> Result[Self, FirmwareError]
+pub fn FirmwareImage::gaps(Self) -> Array[AddressGap]
+pub fn FirmwareImage::highest_address(Self) -> UInt64?
+pub fn FirmwareImage::lowest_address(Self) -> UInt64?
+pub fn FirmwareImage::segments(Self) -> Array[ImageSegment]
+pub fn FirmwareImage::to_intel_hex(Self, record_bytes? : Int) -> Result[String, FirmwareError]
+pub fn FirmwareImage::to_srecord(Self, record_bytes? : Int, header? : String) -> Result[String, FirmwareError]
+pub fn FirmwareImage::total_bytes(Self) -> Int
+
+pub struct ImageSegment {
+  address_value : UInt64
+  data_value : Bytes
+} derive(Eq, @debug.Debug)
+pub fn ImageSegment::address(Self) -> UInt64
+pub fn ImageSegment::data(Self) -> Bytes
+pub fn ImageSegment::end_exclusive(Self) -> UInt64
+pub fn ImageSegment::length(Self) -> Int
+
+pub struct IntelHexDocument {
+  record_values : Array[IntelHexRecord]
+  chunk_values : Array[FirmwareChunk]
+  entry_point_value : UInt64?
+} derive(Eq, @debug.Debug)
+pub fn IntelHexDocument::data_chunks(Self) -> Array[FirmwareChunk]
+pub fn IntelHexDocument::entry_point(Self) -> UInt64?
+pub fn IntelHexDocument::records(Self) -> Array[IntelHexRecord]
+
+pub struct IntelHexRecord {
+  record_type_value : IntelRecordType
+  address_value : Int
+  data_value : Bytes
+  checksum_value : Byte
+  line_index_value : Int
+} derive(Eq, @debug.Debug)
+pub fn IntelHexRecord::address(Self) -> Int
+pub fn IntelHexRecord::byte_count(Self) -> Int
+pub fn IntelHexRecord::checksum(Self) -> Byte
+pub fn IntelHexRecord::data(Self) -> Bytes
+pub fn IntelHexRecord::encode(Self) -> String
+pub fn IntelHexRecord::line_index(Self) -> Int
+pub fn IntelHexRecord::record_type(Self) -> IntelRecordType
+
+pub(all) enum IntelRecordType {
+  IntelData
+  IntelEndOfFile
+  IntelExtendedSegmentAddress
+  IntelStartSegmentAddress
+  IntelExtendedLinearAddress
+  IntelStartLinearAddress
+} derive(Eq, @debug.Debug)
+
+pub(all) enum OverlapPolicy {
+  RejectOverlap
+  AllowIdentical
+  ReplaceExisting
+} derive(Eq, @debug.Debug)
+
+pub struct SRecord {
+  record_type_value : SRecordType
+  address_value : UInt64
+  data_value : Bytes
+  checksum_value : Byte
+  line_index_value : Int
+} derive(Eq, @debug.Debug)
+pub fn SRecord::address(Self) -> UInt64
+pub fn SRecord::byte_count(Self) -> Int
+pub fn SRecord::checksum(Self) -> Byte
+pub fn SRecord::data(Self) -> Bytes
+pub fn SRecord::encode(Self) -> String
+pub fn SRecord::line_index(Self) -> Int
+pub fn SRecord::record_type(Self) -> SRecordType
+
+pub struct SRecordDocument {
+  record_values : Array[SRecord]
+  header_value : Bytes?
+  chunk_values : Array[FirmwareChunk]
+  declared_data_count_value : Int?
+  entry_point_value : UInt64?
+} derive(Eq, @debug.Debug)
+pub fn SRecordDocument::data_chunks(Self) -> Array[FirmwareChunk]
+pub fn SRecordDocument::declared_data_count(Self) -> Int?
+pub fn SRecordDocument::entry_point(Self) -> UInt64?
+pub fn SRecordDocument::header(Self) -> Bytes?
+pub fn SRecordDocument::records(Self) -> Array[SRecord]
+
+pub(all) enum SRecordType {
+  SHeader
+  SData16
+  SData24
+  SData32
+  SCount16
+  SCount24
+  STerminate32
+  STerminate24
+  STerminate16
+} derive(Eq, @debug.Debug)
+pub fn SRecordType::address_bytes(Self) -> Int
+pub fn SRecordType::is_count(Self) -> Bool
+pub fn SRecordType::is_data(Self) -> Bool
+pub fn SRecordType::is_termination(Self) -> Bool
+
+pub(all) struct SourcePosition {
+  line_index_value : Int
+  column_index_value : Int?
+} derive(Eq, @debug.Debug)
+pub fn SourcePosition::column(Int, Int) -> Self
+pub fn SourcePosition::column_index(Self) -> Int?
+pub fn SourcePosition::line(Int) -> Self
+pub fn SourcePosition::line_index(Self) -> Int
+
+// Type aliases
+
+// Traits

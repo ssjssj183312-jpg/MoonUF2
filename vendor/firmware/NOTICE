@@ -1,0 +1,6 @@
+MoonBit Firmware Image Toolkit
+Copyright 2026 张泉义
+
+This product is an original MoonBit implementation informed by public Intel HEX
+and Motorola S-record format documentation. No third-party source code is
+included. See docs/references.md for documentation sources.
