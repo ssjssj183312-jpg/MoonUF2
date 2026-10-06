@@ -2,6 +2,14 @@
 
 会话日期：2026-10-06。以下是实际执行结果，不是计划或 GitHub 状态。
 
+## 公开仓库与远程验证
+
+完整源码提交：[`c753047a1e84ca90f4fe75f0fd4798180d000d9f`](https://github.com/ssjssj183312-jpg/MoonUF2/commit/c753047a1e84ca90f4fe75f0fd4798180d000d9f)。公开树的 58 个文件已与冻结本地版本逐一核对 Git blob 哈希，没有缺失或额外文件。
+
+该提交的 [GitHub Actions 运行 37417410538](https://github.com/ssjssj183312-jpg/MoonUF2/actions/runs/37417410538) 已实际成功。首次 CI 因网页上传漏掉 `vendor/firmware/docs/references.md` 而失败；补齐原始参考文档后重新运行成功，未通过删减来源检查规避错误。官方固定哈希工具链的联网安装也已在 CI 中成功执行。
+
+以上远程结果对应明确提交和运行编号。后续文档提交或新代码的结果应分别查看其 Actions，不能沿用此处状态代替验证。
+
 ## 结果
 
 - 类型检查：`moon check --target js` 通过
