@@ -1,0 +1,21 @@
+name: MoonUF2 检查
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.19.0'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.14'
+      - name: 安装固定哈希的官方 MoonBit 工具链
+        run: |
+          bash scripts/install-toolchain.sh "$RUNNER_TEMP/moonuf2-moon"
+          echo "MOON_HOME=$RUNNER_TEMP/moonuf2-moon" >> "$GITHUB_ENV"
+          echo "$RUNNER_TEMP/moonuf2-moon/bin" >> "$GITHUB_PATH"
+      - run: bash scripts/check.sh
