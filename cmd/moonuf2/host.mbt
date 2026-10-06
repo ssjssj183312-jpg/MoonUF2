@@ -1,5 +1,5 @@
 ///|
-/// Node host bindings only: no firmware parsing or encoding lives in JavaScript.
+/// 仅封装 Node.js 主机接口；固件解析与编码均不在 JavaScript 中实现。
 #external
 type ReadResult
 
@@ -16,7 +16,7 @@ extern "js" fn set_exit_code(code : Int) -> Unit =
   #| (code) => { process.exitCode = code; }
 
 ///|
-/// Open first, then bound and read the same descriptor. Reject devices/FIFOs.
+/// 先打开文件，再检查大小并读取同一文件描述符；拒绝设备文件和命名管道。
 extern "js" fn read_file(path : String, limit : Int) -> ReadResult =
   #| (path, limit) => {
   #|   const fs = require('node:fs');
@@ -35,7 +35,16 @@ extern "js" fn read_file(path : String, limit : Int) -> ReadResult =
   #|     }
   #|     if (size !== stat.size) return { error: 'io.input_changed: 读取时输入大小发生变化，请重试' };
   #|     return { bytes: buffer.subarray(0, size), error: '' };
-  #|   } catch (e) { return { error: 'io.read: ' + e.message }; }
+  #|   } catch (e) {
+  #|     const code = e && typeof e.code === 'string' ? e.code : 'UNKNOWN';
+  #|     const reason = ({
+  #|       ENOENT: '文件或路径不存在', EACCES: '没有访问权限', EPERM: '操作权限不足',
+  #|       ENOTDIR: '路径中的目录无效', EISDIR: '目标是目录而不是普通文件',
+  #|       EMFILE: '进程打开的文件过多', ENFILE: '系统打开的文件过多',
+  #|       ENAMETOOLONG: '文件路径过长', EIO: '输入输出错误', EBADF: '文件描述符无效'
+  #|     })[code] || '系统读取失败';
+  #|     return { error: 'io.read: 读取文件失败：' + reason + '（' + code + '）' };
+  #|   }
   #|   finally { if (fd !== undefined) fs.closeSync(fd); }
   #| }
 
@@ -48,7 +57,7 @@ extern "js" fn ReadResult::bytes(self : ReadResult) -> Bytes =
   #| (result) => result.bytes
 
 ///|
-/// Publish a complete sibling temporary file without replacing an existing path.
+/// 在目标目录完整写入临时文件，再发布结果；不替换任何已有路径。
 extern "js" fn write_file(path : String, bytes : Bytes) -> String =
   #| (path, bytes) => {
   #|   const fs = require('node:fs');
@@ -64,12 +73,21 @@ extern "js" fn write_file(path : String, bytes : Bytes) -> String =
   #|     fs.linkSync(temporary, path);
   #|     return '';
   #|   } catch (e) {
-  #|     return 'io.write: ' + (e.code === 'EEXIST' ? '输出已存在，不会覆盖：' + path : e.message);
+  #|     const code = e && typeof e.code === 'string' ? e.code : 'UNKNOWN';
+  #|     const reason = ({
+  #|       ENOENT: '输出目录不存在', EACCES: '没有访问权限', EPERM: '操作权限不足',
+  #|       ENOSPC: '存储空间不足', EDQUOT: '存储配额不足', EROFS: '文件系统只读',
+  #|       ENOTDIR: '路径中的目录无效', EISDIR: '输出路径是目录',
+  #|       EMFILE: '进程打开的文件过多', ENFILE: '系统打开的文件过多',
+  #|       ENAMETOOLONG: '文件路径过长', EFBIG: '文件大小超过系统限制',
+  #|       EXDEV: '无法跨文件系统发布输出', EIO: '输入输出错误', EBADF: '文件描述符无效'
+  #|     })[code] || '系统写入失败';
+  #|     return 'io.write: ' + (code === 'EEXIST' ? '输出已存在，不会覆盖：' + path : '写入文件失败：' + reason) + '（' + code + '）';
   #|   } finally { if (created) { try { fs.unlinkSync(temporary); } catch (_) {} } }
   #| }
 
 ///|
-/// Text firmware is ASCII. Preserve bytes exactly, rejecting non-ASCII explicitly.
+/// 文本固件使用 ASCII；完整保留原始字节，并明确拒绝非 ASCII 输入。
 extern "js" fn ascii_text(bytes : Bytes) -> String =
   #| (bytes) => Buffer.from(bytes).toString('latin1')
 

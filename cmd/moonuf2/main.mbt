@@ -19,25 +19,25 @@ fn usage() -> Unit {
     #|MoonUF2 0.1.0：严格校验、检查和转换固件文件（不会烧录设备）
     #|
     #|用法：
-    #|  moonuf2 inspect INPUT [--from uf2|bin|hex|srec] [选项]
-    #|  moonuf2 verify INPUT [--from uf2|bin|hex|srec] [选项]
-    #|  moonuf2 convert INPUT OUTPUT --from FORMAT --to FORMAT [选项]
+    #|  moonuf2 inspect 输入文件 [--from uf2|bin|hex|srec] [选项]
+    #|  moonuf2 verify 输入文件 [--from uf2|bin|hex|srec] [选项]
+    #|  moonuf2 convert 输入文件 输出文件 --from 格式 --to 格式 [选项]
     #|
     #|选项：
-    #|  --base N              BIN 输入的必填起始地址（十进制或 0x 十六进制）
-    #|  --family N            UF2 输入的预期 family ID；其他输入设置 family ID
-    #|  --max-bytes N         输入/输出上限，默认 16777216（16 MiB），最高 16 MiB
-    #|  --payload-size N      UF2 输出块有效载荷，默认 256；4..476，且为 4 的倍数
-    #|  --fill N              BIN 输出空洞填充值，默认 255；0..255
-    #|  --discard-metadata    明确允许丢弃 entry point/header/family 等不可表示元数据
+    #|  --base 数值           BIN 输入的必填起始地址（十进制或 0x 十六进制）
+    #|  --family 数值         UF2 输入的预期芯片家族标识；其他输入设置该标识
+    #|  --max-bytes 数值      输入/输出上限，默认 16777216（16 MiB），最高 16 MiB
+    #|  --payload-size 数值   UF2 输出块有效载荷，默认 256；4..476，且为 4 的倍数
+    #|  --fill 数值           BIN 输出空洞填充值，默认 255；0..255
+    #|  --discard-metadata    明确允许丢弃入口地址、头信息、芯片家族标识等不可表示元数据
     #|  --                    结束选项解析（用于以 - 开头的文件名）
     #|  --help                显示帮助
     #|  --version             显示版本
     #|
     #|转换必须显式指定 --from 和 --to；不按文件扩展名猜测。
     #|输出文件必须不存在；已有文件不会覆盖。HEX/S-record 使用 MoonBit 上游库。
-    #|BIN 输出从最低地址开始，空洞填充；请保留输出中报告的 base 地址。
-    #|严格 UF2 仅支持普通 main-flash 数据与可选 family ID；地址和长度须 4 字节对齐。
+    #|BIN 输出从最低地址开始，空洞填充；请保留输出中报告的起始地址。
+    #|严格 UF2 仅支持普通主闪存数据与可选芯片家族标识；地址和长度须 4 字节对齐。
     #|当前 HEX/S-record 检查也使用严格图像适配器；入口点/头信息需 --discard-metadata。
     #|校验仅检查文件结构，不保证设备兼容性、固件真实性或可安全烧录。
     #|
@@ -49,7 +49,7 @@ fn usage() -> Unit {
 }
 
 ///|
-/// Numeric parsing is strict and bounded before multiplication; no signs or whitespace.
+/// 严格解析数值，在乘法前检查上限；不接受正负号或空白。
 fn number(text : String) -> Result[UInt64, String] {
   let hex = text.has_prefix("0x") || text.has_prefix("0X")
   let start = if hex { 2 } else { 0 }
@@ -72,7 +72,7 @@ fn number(text : String) -> Result[UInt64, String] {
     if digit < 0 || digit.to_uint64() >= radix {
       return Err("cli.number: 非法数值：" + text)
     }
-    // All CLI numeric options are within the UF2 32-bit address domain.
+    // 命令行数值选项均限制在 UF2 的 32 位无符号整数范围内。
     if value > (0xffffffffUL - digit.to_uint64()) / radix {
       return Err(
         "cli.number: 数值超过 32 位无符号整数范围：" + text,
@@ -159,7 +159,7 @@ fn parse(args : FixedArray[String]) -> Result[Config, String] {
   let from_format = values.get("--from").unwrap_or("uf2")
   let to_format = values.get("--to").unwrap_or("")
   if !is_format(from_format) || (command == "convert" && !is_format(to_format)) {
-    return Err("cli.format: FORMAT 必须是 uf2、bin、hex 或 srec")
+    return Err("cli.format: 格式必须是 uf2、bin、hex 或 srec")
   }
   let parsed : Map[String, UInt64] = Map([])
   for key in ["--base", "--family", "--max-bytes", "--payload-size", "--fill"] {
@@ -222,7 +222,11 @@ fn parse(args : FixedArray[String]) -> Result[Config, String] {
 
 ///|
 fn core_error(error : @uf2.Uf2Error) -> String {
-  error.code + " (block " + error.block.to_string() + "): " + error.message
+  error.code +
+  "（数据块 " +
+  error.block.to_string() +
+  "）：" +
+  error.message
 }
 
 ///|
@@ -281,19 +285,19 @@ fn summary(image : @uf2.Image) -> Unit {
     Some(value) => "0x" + value.to_string(radix=16)
     None => "无"
   }
-  println("family: " + family)
-  println("base: 0x" + base.to_string(radix=16))
-  println("end (exclusive): 0x" + end.to_string(radix=16))
-  println("segments: " + image.segments.length().to_string())
-  println("data bytes: " + size.to_string())
-  println("span bytes: " + (end - base).to_string())
+  println("芯片家族标识：" + family)
+  println("起始地址：0x" + base.to_string(radix=16))
+  println("结束地址（不包含）：0x" + end.to_string(radix=16))
+  println("数据段数量：" + image.segments.length().to_string())
+  println("有效数据字节数：" + size.to_string())
+  println("地址跨度字节数：" + (end - base).to_string())
 }
 
 ///|
-/// Include record checksums, address records and newlines without encoding data.
+/// 估算记录校验和、地址记录和换行符的长度，不执行数据编码。
 fn text_output_bound(image : @uf2.Image, format : String) -> UInt64 {
   if format == "hex" {
-    let mut size = 11UL // EOF, without final newline
+    let mut size = 11UL // 文件结束记录，不含末尾换行符
     let mut current_upper = 0UL
     for segment in image.segments {
       let mut offset = 0
@@ -364,7 +368,7 @@ fn output_bytes(image : @uf2.Image, cfg : Config) -> Result[Bytes, String] {
     "bin" => {
       if image.family is Some(_) && !cfg.discard_metadata {
         return Err(
-          "adapter.metadata_loss: BIN 不保存 family ID；请明确使用 --discard-metadata",
+          "adapter.metadata_loss: BIN 不保存芯片家族标识；请明确使用 --discard-metadata",
         )
       }
       @uf2.to_bin(image, max_span=cfg.max_bytes, fill=cfg.fill).map_err(
@@ -372,8 +376,8 @@ fn output_bytes(image : @uf2.Image, cfg : Config) -> Result[Bytes, String] {
       )
     }
     "hex" | "srec" => {
-      // Bound text allocation using the selected record widths and address fields.
-      // Adjacent source segments may be merged upstream, which only reduces size.
+      // 根据记录宽度与地址字段限制文本分配大小。
+      // 上游可能合并相邻数据段，此操作只会减小输出长度。
       let estimated = text_output_bound(image, cfg.to_format)
       if estimated > cfg.max_bytes.to_uint64() {
         return Err(
@@ -421,9 +425,9 @@ fn run(cfg : Config) -> Result[Unit, String] {
       cfg.input +
       " -> " +
       cfg.output +
-      " (" +
+      "（" +
       bytes.length().to_string() +
-      " bytes)",
+      " 字节）",
     )
   } else if cfg.command == "verify" {
     println(
