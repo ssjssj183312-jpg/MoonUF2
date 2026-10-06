@@ -1,5 +1,5 @@
 ///|
-/// Independent review helpers deliberately build binary headers without @moonuf2.encode.
+/// 独立审查辅助函数直接构造二进制头部，不调用 @moonuf2.encode。
 fn review_put32(bytes : FixedArray[Byte], at : Int, value : UInt) -> Unit {
   for i = 0; i < 4; i = i + 1 {
     bytes[at + i] = ((value >> (i * 8)) & 0xFFU).to_byte()
@@ -54,19 +54,19 @@ fn review_replace32(bytes : Bytes, at : Int, word : UInt) -> Bytes {
 fn review_error(result : Result[@moonuf2.Image, @moonuf2.Uf2Error]) -> String {
   match result {
     Err(error) => error.code
-    Ok(_) => "unexpected success"
+    Ok(_) => "意外成功"
   }
 }
 
 ///|
-test "review: short and non-block-aligned inputs reject before header reads" {
+test "审查：在读取头部之前拒绝过短和未按块对齐的输入" {
   for n in [0, 1, 31, 32, 507, 508, 511, 513, 1023, 1025] {
     assert_eq(review_error(@moonuf2.decode(Bytes::make(n, 0x00))), "uf2.length")
   }
 }
 
 ///|
-test "review: every magic word is checked at every physical block" {
+test "审查：逐个物理块检查全部魔数" {
   let a = review_block(0U, number=0U, count=2U)
   let b = review_block(4U, number=1U, count=2U)
   for position in [0, 4, 508] {
@@ -76,13 +76,13 @@ test "review: every magic word is checked at every physical block" {
     assert_eq(review_error(result), "uf2.magic")
     match result {
       Err(error) => assert_eq(error.block, 1)
-      Ok(_) => fail("corrupt magic accepted")
+      Ok(_) => fail("错误地接受了损坏的魔数")
     }
   }
 }
 
 ///|
-test "review: all unsupported flag bits reject without guessing extensions" {
+test "审查：拒绝所有不支持的标志位，不推测扩展含义" {
   for bit = 0; bit < 32; bit = bit + 1 {
     if bit != 13 {
       assert_eq(
@@ -101,7 +101,7 @@ test "review: all unsupported flag bits reject without guessing extensions" {
 }
 
 ///|
-test "review: payload bounds and alignment cannot cause unsafe reads" {
+test "审查：载荷边界和对齐检查防止不安全读取" {
   for n in [0U, 477U, 512U, 0x80000000U, 0xFFFFFFFFU] {
     assert_eq(
       review_error(@moonuf2.decode(review_block(0U, size=n))),
@@ -130,7 +130,7 @@ test "review: payload bounds and alignment cannot cause unsafe reads" {
 }
 
 ///|
-test "review: maximum address endpoint uses widened arithmetic" {
+test "审查：最大地址终点使用扩宽后的整数运算" {
   assert_true(@moonuf2.decode(review_block(0xFFFFFFFCU)) is Ok(_))
   assert_eq(
     review_error(@moonuf2.decode(review_block(0xFFFFFFFCU, size=8U))),
@@ -144,7 +144,7 @@ test "review: maximum address endpoint uses widened arithmetic" {
 }
 
 ///|
-test "review: malformed and hostile numbering does not drive allocations" {
+test "审查：畸形或恶意的块编号不会决定内存分配量" {
   for (number, count) in [(0U, 0U), (1U, 1U), (0xFFFFFFFFU, 0xFFFFFFFFU)] {
     assert_eq(
       review_error(@moonuf2.decode(review_block(0U, number~, count~))),
@@ -185,7 +185,7 @@ test "review: malformed and hostile numbering does not drive allocations" {
 }
 
 ///|
-test "review: family presence ID expectation and reserved field are strict" {
+test "审查：严格检查芯片家族标识的存在性、预期值及保留字段" {
   assert_eq(
     review_error(@moonuf2.decode(review_block(0U, family=1U))),
     "uf2.reserved",
@@ -230,11 +230,11 @@ test "review: family presence ID expectation and reserved field are strict" {
 }
 
 ///|
-test "review: logical duplicates coalesce while conflicts reject" {
+test "审查：合并逻辑重复块并拒绝冲突" {
   let block = review_block(0U)
   let repeated = @moonuf2.decode(review_join([block, block, block])).unwrap()
   assert_eq(repeated.segments.length(), 1)
-  // Unused bytes are not part of the logical payload.
+  // 未使用的字节不属于逻辑载荷。
   let padding_changed = review_replace32(block, 504, 0xDEADBEEFU)
   assert_eq(
     @moonuf2.decode(review_join([block, padding_changed])).unwrap(),
@@ -254,7 +254,7 @@ test "review: logical duplicates coalesce while conflicts reject" {
 }
 
 ///|
-test "review: permutations and duplicates preserve address sorted data" {
+test "审查：乱序和重复块仍生成按地址排序的数据" {
   let blocks = [
     review_block(32U, number=0U, count=3U, seed=32),
     review_block(0U, number=1U, count=3U, seed=0),
@@ -281,7 +281,7 @@ test "review: permutations and duplicates preserve address sorted data" {
 }
 
 ///|
-test "review: distinct numbers must never overlap even with equal bytes" {
+test "审查：不同编号的块不得重叠，即使字节内容相同" {
   for second_address in [0U, 4U] {
     assert_eq(
       review_error(
@@ -307,7 +307,7 @@ test "review: distinct numbers must never overlap even with equal bytes" {
 }
 
 ///|
-test "review: image validation rejects unsafe ranges and leaves inputs unchanged" {
+test "审查：镜像校验拒绝不安全的地址范围且不修改输入" {
   let high : @moonuf2.Image = {
     family: None,
     segments: [{ address: 0xFFFFFFFFFFFFFFFCUL, data: b"abcd", }],
@@ -337,11 +337,11 @@ test "review: image validation rejects unsafe ranges and leaves inputs unchanged
 }
 
 ///|
-test "review: output cap rejects before allocating oversized UF2" {
+test "审查：在分配过大的 UF2 缓冲区之前拒绝超限输出" {
   let image = @moonuf2.from_bin(Bytes::make(32769 * 4, 0x00), 0UL).unwrap()
   match @moonuf2.encode(image, payload_size=4) {
     Err(error) => assert_eq(error.code, "uf2.output_limit")
-    Ok(_) => fail("UF2 output limit exceeded")
+    Ok(_) => fail("超出了 UF2 输出上限")
   }
   let wide : @moonuf2.Image = {
     family: None,
@@ -352,12 +352,12 @@ test "review: output cap rejects before allocating oversized UF2" {
   }
   match @moonuf2.to_bin(wide, max_span=2147483647) {
     Err(error) => assert_eq(error.code, "bin.span_limit")
-    Ok(_) => fail("BIN hard span limit exceeded")
+    Ok(_) => fail("超出了 BIN 地址跨度硬性上限")
   }
 }
 
 ///|
-test "review: 16 MiB UF2 endpoint accepted and next block rejected" {
+test "审查：接受恰好 16 MiB 的 UF2，并拒绝多出的一个块" {
   let raw = Bytes::makei(32768 * 4, i => (i * 7).to_byte())
   let image = @moonuf2.from_bin(raw, 0UL).unwrap()
   let encoded = @moonuf2.encode(image, payload_size=4).unwrap()
@@ -372,7 +372,7 @@ test "review: 16 MiB UF2 endpoint accepted and next block rejected" {
 }
 
 ///|
-test "review: BIN exact hard cap and one aligned word over" {
+test "审查：接受恰好达到 BIN 硬性上限的输入，并拒绝多出的一个对齐字" {
   let raw = Bytes::make(16777216, 0x42)
   let image = @moonuf2.from_bin(raw, 0UL).unwrap()
   let restored = @moonuf2.to_bin(image).unwrap()
@@ -386,10 +386,10 @@ test "review: BIN exact hard cap and one aligned word over" {
 }
 
 ///|
-test "review: encoding zero pads each unused payload byte" {
+test "审查：编码时将每个未使用的载荷字节填零" {
   let image = @moonuf2.from_bin(Bytes::makei(260, i => i.to_byte()), 0UL).unwrap()
   let encoded = @moonuf2.encode(image).unwrap()
-  // First payload is 256 bytes and second payload is four bytes.
+  // 第一个载荷为 256 字节，第二个载荷为 4 字节。
   for i = 32 + 256; i < 508; i = i + 1 {
     assert_eq(encoded[i], 0x00)
   }

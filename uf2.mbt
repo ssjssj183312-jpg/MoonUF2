@@ -1,5 +1,5 @@
 ///|
-/// A non-flashing sparse image. Addresses are checked before encoding.
+/// 稀疏数据段，不执行烧录；编码前检查地址范围。
 pub(all) struct Segment {
   address : UInt64
   data : Bytes
@@ -12,7 +12,7 @@ pub(all) struct Image {
 } derive(Eq, Debug)
 
 ///|
-/// block is the physical input block index, or -1 for image-level errors.
+/// block 为从零计数的物理输入块索引；镜像级错误使用 -1。
 pub(all) struct Uf2Error {
   code : String
   block : Int
@@ -40,19 +40,19 @@ fn write32(data : FixedArray[Byte], at : Int, value : UInt) -> Unit {
 }
 
 ///|
-/// Strict ordinary main-flash UF2 only. Repeated identical logical blocks
-/// are tolerated; different block numbers may never overlap addresses.
+/// 仅支持严格的普通主闪存 UF2。允许内容一致的逻辑块重复出现；
+/// 不同逻辑块编号对应的地址范围不得重叠。
 pub fn decode(
   data : Bytes,
   expected_family? : UInt? = None,
 ) -> Result[Image, Uf2Error] {
   if data.length() == 0 || data.length() % 512 != 0 {
     return Err(
-      failure("uf2.length", -1, "expected nonempty multiple of 512 bytes"),
+      failure("uf2.length", -1, "输入不能为空，长度必须是 512 字节的整数倍"),
     )
   }
   if data.length() > 16777216 {
-    return Err(failure("uf2.input_limit", -1, "UF2 exceeds 16 MiB input limit"))
+    return Err(failure("uf2.input_limit", -1, "UF2 输入超过 16 MiB 上限"))
   }
   let seen : Map[UInt, (UInt, Bytes)] = Map([])
   let segments : Array[Segment] = []
@@ -63,7 +63,7 @@ pub fn decode(
     if read32(data, p) != 0x0A324655U ||
       read32(data, p + 4) != 0x9E5D5157U ||
       read32(data, p + 508) != 0x0AB16F30U {
-      return Err(failure("uf2.magic", i, "invalid UF2 magic"))
+      return Err(failure("uf2.magic", i, "UF2 魔数无效"))
     }
     let flags = read32(data, p + 8)
     if flags != 0U && flags != 0x2000U {
@@ -71,28 +71,28 @@ pub fn decode(
         failure(
           "uf2.unsupported_flags",
           i,
-          "unsupported flags: " +
+          "不支持的标志位：" +
           flags.to_string(radix=16) +
-          "; only optional family ID (0x2000) is supported",
+          "；仅支持可选芯片家族标志（0x2000）",
         ),
       )
     }
     let address = read32(data, p + 12)
     let size = read32(data, p + 16)
     if size == 0U || size > 476U {
-      return Err(failure("uf2.payload", i, "payload must be 1..476 bytes"))
+      return Err(failure("uf2.payload", i, "有效载荷长度必须在 1..476 字节之间"))
     }
     if size % 4U != 0U || address % 4U != 0U {
       return Err(
         failure(
-          "uf2.alignment", i, "payload size and address must be 4-byte aligned",
+          "uf2.alignment", i, "有效载荷长度和地址必须按 4 字节对齐",
         ),
       )
     }
     if address.to_uint64() + size.to_uint64() > 0x100000000UL {
       return Err(
         failure(
-          "uf2.address_overflow", i, "payload extends past 32-bit address space",
+          "uf2.address_overflow", i, "有效载荷超出 32 位地址空间",
         ),
       )
     }
@@ -101,7 +101,7 @@ pub fn decode(
     if count == 0U || no >= count {
       return Err(
         failure(
-          "uf2.block_number", i, "blockNo must be less than nonzero numBlocks",
+          "uf2.block_number", i, "numBlocks 必须非零，且 blockNo 必须小于 numBlocks",
         ),
       )
     }
@@ -109,7 +109,7 @@ pub fn decode(
     if flags == 0U && read32(data, p + 28) != 0U {
       return Err(
         failure(
-          "uf2.reserved", i, "family/file-size field must be zero without family flag",
+          "uf2.reserved", i, "未设置芯片家族标志时，芯片家族/文件大小字段必须为零",
         ),
       )
     }
@@ -118,17 +118,17 @@ pub fn decode(
       family = f
     } else {
       if count != total {
-        return Err(failure("uf2.block_count", i, "inconsistent numBlocks"))
+        return Err(failure("uf2.block_count", i, "各块的 numBlocks 不一致"))
       }
       if family != f {
         return Err(
-          failure("uf2.family", i, "mixed family IDs or mixed family presence"),
+          failure("uf2.family", i, "混用了不同芯片家族编号，或家族标志的有无不一致"),
         )
       }
     }
     if expected_family is Some(wanted) {
       if f != Some(wanted) {
-        return Err(failure("uf2.family", i, "expected family does not match"))
+        return Err(failure("uf2.family", i, "芯片家族编号与期望值不匹配"))
       }
     }
     let payload = Bytes::makei(size.reinterpret_as_int(), j => data[p + 32 + j])
@@ -137,7 +137,7 @@ pub fn decode(
         if old_address != address || old_data != payload {
           return Err(
             failure(
-              "uf2.duplicate_conflict", i, "same blockNo has conflicting address or payload",
+              "uf2.duplicate_conflict", i, "相同 blockNo 的地址或有效载荷存在冲突",
             ),
           )
         }
@@ -150,7 +150,7 @@ pub fn decode(
   if seen.length().reinterpret_as_uint() != total {
     return Err(
       failure(
-        "uf2.missing_blocks", -1, "one or more logical blocks are missing",
+        "uf2.missing_blocks", -1, "缺少一个或多个逻辑块",
       ),
     )
   }
@@ -159,7 +159,7 @@ pub fn decode(
     if segments[i].address <
       segments[i - 1].address + segments[i - 1].data.length().to_uint64() {
       return Err(
-        failure("uf2.overlap", -1, "different blocks overlap address ranges"),
+        failure("uf2.overlap", -1, "不同逻辑块的地址范围重叠"),
       )
     }
   }
@@ -167,31 +167,31 @@ pub fn decode(
 }
 
 ///|
-/// Validate, sort a copy, and encode without filling sparse gaps.
+/// 先校验并排序列表副本，再编码；不填充稀疏空洞。
 pub fn encode(
   image : Image,
   payload_size? : Int = 256,
 ) -> Result[Bytes, Uf2Error] {
   if payload_size <= 0 || payload_size > 476 || payload_size % 4 != 0 {
     return Err(
-      failure("uf2.payload", -1, "payload size must be aligned and in 4..476"),
+      failure("uf2.payload", -1, "有效载荷长度必须在 4..476 之间，且为 4 的倍数"),
     )
   }
   let segments = image.segments.copy()
   segments.sort_by((a, b) => a.address.compare(b.address))
   if segments.is_empty() {
-    return Err(failure("image.empty", -1, "image must contain data"))
+    return Err(failure("image.empty", -1, "镜像必须包含数据"))
   }
   let mut count = 0UL
   for i = 0; i < segments.length(); i = i + 1 {
     let s = segments[i]
     if s.data.length() == 0 {
-      return Err(failure("image.empty_segment", -1, "empty segment"))
+      return Err(failure("image.empty_segment", -1, "数据段不能为空"))
     }
     if s.address % 4UL != 0UL || s.data.length() % 4 != 0 {
       return Err(
         failure(
-          "uf2.alignment", -1, "segment addresses and lengths must be 4-byte aligned; padding must be explicit",
+          "uf2.alignment", -1, "数据段地址和长度必须按 4 字节对齐；补齐必须由调用者显式完成",
         ),
       )
     }
@@ -199,14 +199,14 @@ pub fn encode(
       s.data.length().to_uint64() > 0x100000000UL - s.address {
       return Err(
         failure(
-          "uf2.address_overflow", -1, "segment exceeds 32-bit address space",
+          "uf2.address_overflow", -1, "数据段超出 32 位地址空间",
         ),
       )
     }
     if i > 0 &&
       s.address <
       segments[i - 1].address + segments[i - 1].data.length().to_uint64() {
-      return Err(failure("uf2.overlap", -1, "segments overlap"))
+      return Err(failure("uf2.overlap", -1, "数据段地址范围重叠"))
     }
     count = count +
       (s.data.length().to_uint64() + payload_size.to_uint64() - 1UL) /
@@ -214,7 +214,7 @@ pub fn encode(
   }
   if count > 32768UL {
     return Err(
-      failure("uf2.output_limit", -1, "encoded UF2 exceeds 16 MiB limit"),
+      failure("uf2.output_limit", -1, "编码后的 UF2 超过 16 MiB 上限"),
     )
   }
   let out = FixedArray::make(count.to_int() * 512, (0).to_byte())
@@ -248,7 +248,7 @@ pub fn encode(
 }
 
 ///|
-/// BIN has no address or family metadata; caller must retain base separately.
+/// BIN 不保存地址或芯片家族元数据；调用者必须单独保留基址。
 pub fn to_bin(
   image : Image,
   max_span? : Int = 16777216,
@@ -257,7 +257,7 @@ pub fn to_bin(
   let segments = image.segments.copy()
   segments.sort_by((a, b) => a.address.compare(b.address))
   if segments.is_empty() {
-    return Err(failure("image.empty", -1, "image must contain data"))
+    return Err(failure("image.empty", -1, "镜像必须包含数据"))
   }
   let base = segments[0].address
   let mut end = base
@@ -265,10 +265,10 @@ pub fn to_bin(
     if s.data.length() == 0 ||
       s.address > 0xFFFFFFFFUL ||
       s.data.length().to_uint64() > 0x100000000UL - s.address {
-      return Err(failure("image.range", -1, "invalid segment range"))
+      return Err(failure("image.range", -1, "数据段地址范围无效"))
     }
     if s.address < end {
-      return Err(failure("uf2.overlap", -1, "segments overlap"))
+      return Err(failure("uf2.overlap", -1, "数据段地址范围重叠"))
     }
     end = s.address + s.data.length().to_uint64()
   }
@@ -277,7 +277,7 @@ pub fn to_bin(
     end - base > 16777216UL {
     return Err(
       failure(
-        "bin.span_limit", -1, "BIN span exceeds caller limit or 16 MiB hard limit",
+        "bin.span_limit", -1, "BIN 地址跨度超过调用者设置的上限或 16 MiB 硬上限",
       ),
     )
   }
@@ -297,18 +297,18 @@ pub fn from_bin(
   family? : UInt? = None,
 ) -> Result[Image, Uf2Error] {
   if data.length() == 0 {
-    return Err(failure("image.empty", -1, "BIN must be nonempty"))
+    return Err(failure("image.empty", -1, "BIN 输入不能为空"))
   }
   if data.length() > 16777216 {
-    return Err(failure("bin.input_limit", -1, "BIN exceeds 16 MiB input limit"))
+    return Err(failure("bin.input_limit", -1, "BIN 输入超过 16 MiB 上限"))
   }
   if base > 0xFFFFFFFFUL || data.length().to_uint64() > 0x100000000UL - base {
-    return Err(failure("uf2.address_overflow", -1, "BIN exceeds address space"))
+    return Err(failure("uf2.address_overflow", -1, "BIN 数据超出地址空间"))
   }
   if base % 4UL != 0UL || data.length() % 4 != 0 {
     return Err(
       failure(
-        "uf2.alignment", -1, "BIN base and length must be 4-byte aligned; no implicit padding",
+        "uf2.alignment", -1, "BIN 基址和长度必须按 4 字节对齐；不会隐式补齐",
       ),
     )
   }

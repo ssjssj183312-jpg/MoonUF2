@@ -1,5 +1,5 @@
 ///|
-test "BIN UF2 BIN round trip and header fields" {
+test "BIN、UF2 往返转换及头字段" {
   let data = Bytes::makei(1024, i => i.to_byte())
   let image = from_bin(data, 0x10000000UL, family=Some(0xE48BFF56U)).unwrap()
   let uf2 = encode(image).unwrap()
@@ -14,7 +14,7 @@ test "BIN UF2 BIN round trip and header fields" {
 }
 
 ///|
-test "all supported payload sizes round trip" {
+test "所有支持的有效载荷长度均可往返转换" {
   for size = 4; size <= 476; size = size + 4 {
     let data = Bytes::makei(size * 3 + 4, i => (i * 13).to_byte())
     let image = from_bin(data, 0UL).unwrap()
@@ -26,7 +26,7 @@ test "all supported payload sizes round trip" {
 }
 
 ///|
-test "sparse conversion bounded and fill explicit" {
+test "稀疏转换限制跨度并显式选择填充值" {
   let image : Image = {
     family: None,
     segments: [
@@ -50,7 +50,7 @@ test "sparse conversion bounded and fill explicit" {
 }
 
 ///|
-test "exact address-space endpoint accepted" {
+test "接受恰好到达地址空间末端的数据" {
   let image = from_bin(b"abcd", 0xFFFFFFFCUL).unwrap()
   let decoded = decode(encode(image).unwrap()).unwrap()
   assert_eq(decoded.segments[0].address, 0xFFFFFFFCUL)
@@ -59,7 +59,7 @@ test "exact address-space endpoint accepted" {
 }
 
 ///|
-test "generation requires explicit alignment and nonempty data" {
+test "生成要求显式对齐且数据非空" {
   assert_true(from_bin(b"abc", 0UL) is Err(_))
   assert_true(from_bin(b"abcd", 1UL) is Err(_))
   assert_true(from_bin(b"", 0UL) is Err(_))

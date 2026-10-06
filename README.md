@@ -21,10 +21,10 @@
 ```sh
 # 已有兼容 MoonBit 和 Node 时：
 moon test --target js
-./scripts/moonuf2 --help
+sh scripts/moonuf2 --help
 
 # Linux x86_64 可安装本项目哈希锁定的官方工具链至一个不存在的目录：
-./scripts/install-toolchain.sh "$HOME/moonuf2-toolchain"
+bash scripts/install-toolchain.sh "$HOME/moonuf2-toolchain"
 export MOON_HOME="$HOME/moonuf2-toolchain"
 export PATH="$MOON_HOME/bin:$PATH"
 ```
@@ -33,20 +33,20 @@ export PATH="$MOON_HOME/bin:$PATH"
 
 ```sh
 # BIN 的基址必须显式提供；数据长度和基址必须为 4 的倍数
-./scripts/moonuf2 convert app.bin app.uf2 --from bin --to uf2 \
+sh scripts/moonuf2 convert app.bin app.uf2 --from bin --to uf2 \
   --base 0x10000000 --family 0xe48bff56
 
-./scripts/moonuf2 inspect app.uf2
-./scripts/moonuf2 verify app.uf2 --family 0xe48bff56
+sh scripts/moonuf2 inspect app.uf2
+sh scripts/moonuf2 verify app.uf2 --family 0xe48bff56
 
 # BIN 无法保存 family；显式同意丢失元数据，并记录程序输出的 base
-./scripts/moonuf2 convert app.uf2 restored.bin --from uf2 --to bin \
+sh scripts/moonuf2 convert app.uf2 restored.bin --from uf2 --to bin \
   --discard-metadata --max-bytes 1048576 --fill 255
 
-./scripts/moonuf2 convert app.uf2 app.hex --from uf2 --to hex --discard-metadata
-./scripts/moonuf2 convert app.hex recovered.uf2 --from hex --to uf2 --family 0xe48bff56
-./scripts/moonuf2 convert app.uf2 app.srec --from uf2 --to srec --discard-metadata
-./scripts/moonuf2 convert app.srec from-srec.uf2 --from srec --to uf2 --discard-metadata
+sh scripts/moonuf2 convert app.uf2 app.hex --from uf2 --to hex --discard-metadata
+sh scripts/moonuf2 convert app.hex recovered.uf2 --from hex --to uf2 --family 0xe48bff56
+sh scripts/moonuf2 convert app.uf2 app.srec --from uf2 --to srec --discard-metadata
+sh scripts/moonuf2 convert app.srec from-srec.uf2 --from srec --to uf2 --discard-metadata
 ```
 
 输入格式必须显式选择，不按扩展名猜测。输出文件必须不存在；拒绝覆盖已有文件。参数错误/格式失败返回非零退出码。`inspect` 和 `verify` 默认输入 UF2。非 UF2 可加 `--from`；BIN 输入另需 `--base`。文本的只读 `inspect`/`verify` 也使用严格适配器，入口点/header 会要求 `--discard-metadata`。
@@ -64,7 +64,7 @@ export PATH="$MOON_HOME/bin:$PATH"
 ## 库 API
 
 ```moonbit
-// import "ssjssj183312-jpg/moonuf2" as @uf2
+// 在包配置中导入 ssjssj183312-jpg/moonuf2，别名设为 uf2
 let image = @uf2.from_bin(b"abcd", 0x10000000UL,
   family=Some(0xE48BFF56U)).unwrap()
 let encoded = @uf2.encode(image, payload_size=256).unwrap()
@@ -73,6 +73,8 @@ let checked = @uf2.decode(encoded,
 let bytes = @uf2.to_bin(checked, max_span=1024, fill=0xFF).unwrap()
 ```
 
+网页上传可能不保留脚本可执行权限，以上命令显式使用 sh/bash，不依赖执行位。
+
 公开类型为 `Segment { address: UInt64, data: Bytes }`、`Image { segments, family }`、`Uf2Error { code, block, message }`。`block` 为从零计数的物理输入块；镜像级错误为 -1。库调用返回 `Result`，示例 `.unwrap()` 仅为演示，应用应处理错误。
 
 核心生成/展开会复制并排序 segment 列表，不修改调用者顺序。解析输出按地址排序但不保证合并相邻块，因此比较镜像应比较绝对地址上的数据，而不是 segment 数量。
@@ -80,21 +82,21 @@ let bytes = @uf2.to_bin(checked, max_span=1024, fill=0xFF).unwrap()
 ## 验证
 
 ```sh
-./scripts/check.sh
+bash scripts/check.sh
 ```
 
 会核对 vendor 来源哈希，执行类型检查、三种后端测试、真实 CLI 子进程测试与微软参考差分。测试细节见 [验证记录](docs/validation.md)、[独立边界审查](docs/review.md)。CLI 不支持 native/Wasm 文件 IO；这两种后端验证的是纯库和 adapter。
 
-CI 配置已提供；本地通过不等于 GitHub CI 已运行。项目没有硬件烧录测试、签名校验、独立人工安全审计或全格式兼容性认证。
+CI 配置已提供；远程状态以仓库 Actions 的实际结果为准，本地通过不能代替远程运行证据。项目没有硬件烧录测试、签名校验、独立人工安全审计或全格式兼容性认证。
 
 ## 来源、许可和 AI 使用
 
 新 UF2 核心、适配和 CLI 在 AI 辅助下开发。复用代码按原作者署名保留，不能把上游已有能力宣称为独立原创。原始许可证/NOTICE/固定 commit/文件哈希随项目保留。测试 oracle 来自微软 MIT 许可代码。
 
-详见 [来源清单](docs/sources.md)、[NOTICE](NOTICE)、[LICENSE](LICENSE)。新代码拟使用 Apache-2.0；外部发布前由项目所有者确认。此目录为本地工作成果，不代表已经提交参赛、推送 GitHub 或发布 Mooncakes 包。
+详见 [来源清单](docs/sources.md)、[NOTICE](NOTICE)、[LICENSE](LICENSE)。自有代码采用 Apache-2.0。源代码仓库为 https://github.com/ssjssj183312-jpg/MoonUF2 。代码公开不代表已完成参赛提交、Mooncakes 包发布或硬件验证。
 
 ## 不安装 MoonBit 运行已构建 CLI
 
 交付包如包含 `dist/moonuf2.cjs`，可直接执行 `node dist/moonuf2.cjs --help`。
 它是上述 MoonBit 源码编译得到的 CommonJS 文件，不是另写的 JS 格式解析器。
-开发者运行 `./scripts/build-release.sh` 可重新生成；发布前应再运行完整检查。
+开发者运行 `bash scripts/build-release.sh` 可重新生成；发布前应再运行完整检查。
