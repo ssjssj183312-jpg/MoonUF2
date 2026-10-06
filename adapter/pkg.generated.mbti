@@ -1,0 +1,38 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "ssjssj183312-jpg/moonuf2/adapter"
+
+import {
+  "moonbitlang/core/debug",
+  "ssjssj183312-jpg/moonuf2",
+  "ssjssj183312-jpg/moonuf2/vendor/firmware",
+}
+
+// Values
+pub fn from_firmware_image(@firmware.FirmwareImage, family? : UInt?, discard_metadata? : Bool) -> Result[@moonuf2.Image, AdapterError]
+
+pub fn image_to_intel_hex(@moonuf2.Image, record_bytes? : Int, discard_metadata? : Bool) -> Result[String, AdapterError]
+
+pub fn image_to_srecord(@moonuf2.Image, record_bytes? : Int, entry_point? : UInt64?, header? : String, discard_metadata? : Bool) -> Result[String, AdapterError]
+
+pub fn intel_hex_to_image(String, family? : UInt?, discard_metadata? : Bool) -> Result[@moonuf2.Image, AdapterError]
+
+pub fn srecord_to_image(String, family? : UInt?, discard_metadata? : Bool) -> Result[@moonuf2.Image, AdapterError]
+
+pub fn to_firmware_image(@moonuf2.Image, entry_point? : UInt64?, discard_metadata? : Bool) -> Result[@firmware.FirmwareImage, AdapterError]
+
+// Errors
+
+// Types and methods
+pub(all) enum AdapterError {
+  Firmware(@firmware.FirmwareError)
+  MetadataLoss(String)
+  InvalidImage(String)
+  ResourceLimit(String)
+} derive(Eq, @debug.Debug)
+pub fn AdapterError::code(Self) -> String
+pub fn AdapterError::line_index(Self) -> Int?
+pub fn AdapterError::message(Self) -> String
+
+// Type aliases
+
+// Traits
