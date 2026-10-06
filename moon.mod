@@ -1,0 +1,6 @@
+name = "ssjssj183312-jpg/moonuf2"
+version = "0.1.0"
+license = "Apache-2.0"
+readme = "README.md"
+preferred_target = "js"
+description = "Strict ordinary main-flash UF2 codec and sparse firmware conversion in MoonBit"

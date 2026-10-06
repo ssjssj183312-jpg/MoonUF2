@@ -1,0 +1,13 @@
+MoonUF2
+Local implementation draft, 2026.
+
+This project includes MoonBit Firmware Image Toolkit source under vendor/firmware.
+Copyright 2026 张泉义. Apache-2.0. Its original LICENSE and NOTICE are retained.
+See vendor/firmware/UPSTREAM.md for the pinned source and copied files.
+
+Tests include Microsoft's UF2 reference converter under tests/reference,
+licensed under the MIT license retained there as LICENSE.txt.
+
+Original MoonUF2 implementation and integration were developed with OpenAI AI
+assistance. Upstream code is attributed separately; no human-only authorship,
+third-party endorsement, hardware validation or security certification is claimed.

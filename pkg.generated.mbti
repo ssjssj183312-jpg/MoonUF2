@@ -1,0 +1,38 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "ssjssj183312-jpg/moonuf2"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn decode(Bytes, expected_family? : UInt?) -> Result[Image, Uf2Error]
+
+pub fn encode(Image, payload_size? : Int) -> Result[Bytes, Uf2Error]
+
+pub fn from_bin(Bytes, UInt64, family? : UInt?) -> Result[Image, Uf2Error]
+
+pub fn to_bin(Image, max_span? : Int, fill? : Byte) -> Result[Bytes, Uf2Error]
+
+// Errors
+
+// Types and methods
+pub(all) struct Image {
+  segments : Array[Segment]
+  family : UInt?
+} derive(Eq, @debug.Debug)
+
+pub(all) struct Segment {
+  address : UInt64
+  data : Bytes
+} derive(Eq, @debug.Debug)
+
+pub(all) struct Uf2Error {
+  code : String
+  block : Int
+  message : String
+} derive(Eq, @debug.Debug)
+
+// Type aliases
+
+// Traits
