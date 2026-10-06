@@ -1,0 +1,9 @@
+moon 0.1.20260920 (914d7da 2026-09-20) /tmp/moonhome/.moon/bin/moon
+moonc v0.10.14+7d59c7ec9 (2026-09-18) /tmp/moonhome/.moon/bin/moonc
+moonrun 0.1.20260920 (914d7da 2026-09-20) /tmp/moonhome/.moon/bin/moonrun
+
+Feature flags enabled: rr_moon_mod,rr_moon_pkg
+v24.19.0
+Python 3.12.14
+6da4919f45f4abf7c6d7f3cf8d9a457de77dca430d6fb811d21b27ae1ac8e11d  /tmp/moonhome/.moon/bin/moon
+d163b2c4c878ca584870764b75e633d73e8b9c178dcc6b00c692f6b2a6b1b2dc  /tmp/moonhome/.moon/bin/moonc
