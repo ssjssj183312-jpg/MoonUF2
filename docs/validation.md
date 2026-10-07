@@ -1,5 +1,28 @@
 # 本地验证记录
 
+## 2026-10-07：发布 CLI 的 Windows 回归入口
+
+本轮从远端 `main` 的 `1dc4007891d8f1f9c1a9857a6be33d0948ca8911` 开始，增加 `--cli` 参数，让 CLI 和微软参考差分测试能直接运行指定的预编译文件。默认模式仍编译源码；差分测试每次运行只编译一次。中文子进程输出明确按 UTF-8 解码，解决 Windows 默认 CP936 解码失败的问题。
+
+在 Windows、Node.js v24.19.0、Python 3.10.0 上实际运行：
+
+```sh
+python scripts/cli_test.py --cli dist/moonuf2.cjs
+python tests/differential.py --cli dist/moonuf2.cjs
+```
+
+- 发布 CLI 的 69 项真实子进程检查通过；新增中文及空格路径的往返、UF2/HEX/S-record 在 `0xFFFFFFFC` 起始的四字节往返，以及越界拒绝与不产生输出文件的检查。
+- 微软参考差分的 2 个测试方法通过，保留完整块逐字节比较及短末块语义互读。
+- Windows 不提供命名管道测试所需的 `os.mkfifo`，因此该项仅在提供此 API 的系统运行；`--cli` 模式不调用需要编译器的 sh 启动脚本，默认源码模式仍保留启动脚本检查。69 项不能直接与此前 Linux 源码模式的 58 项相减来计算新增用例数。
+- 6 项测试入口检查通过：缺少编译器或 CLI 文件时给出明确错误、从含中文和空格的外部工作目录解析相对 `--cli` 路径，以及保留 unittest 筛选参数。
+- Python 语法检查、Bash 检查脚本的只读语法检查通过。第三方源文件和版权保持原样；发布 CLI 本身未修改。
+
+`check.sh` 已加入同一发布文件的检查，CI 增加无需 MoonBit 的 Windows 发布文件检查作业。发布前也在 Linux 独立复测：70 项 CLI 检查（包括 FIFO）及 2 个微软参考差分测试通过，Python/Bash 语法和 57 个文件的清单哈希全部通过。Windows 和 Linux 本地均无可用 MoonBit 工具链，因此本轮本地未执行类型检查及 JS/Wasm GC/native 库测试；这些检查由远端 CI 执行。下面的历史成功记录不代表本轮变更通过 CI，最新状态应查看本轮最终提交对应的 Actions 运行。
+
+本轮 CLI 与差分原始输出保存在本地 `logs/release-cli-windows.log` 和 `logs/release-differential-windows.log`，日志不纳入公开源码仓库。
+
+## 2026-10-06：源码与原有 CI 的历史记录
+
 会话日期：2026-10-06。以下是实际执行结果，不是计划或 GitHub 状态。
 
 ## 公开仓库与远程验证
