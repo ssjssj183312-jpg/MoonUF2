@@ -99,4 +99,12 @@ CI 配置已提供；远程状态以仓库 Actions 的实际结果为准，本�
 
 交付包如包含 `dist/moonuf2.cjs`，可直接执行 `node dist/moonuf2.cjs --help`。
 它是上述 MoonBit 源码编译得到的 CommonJS 文件，不是另写的 JS 格式解析器。
+只需 Node.js 与 Python，即可对这个实际发布文件执行完整 CLI 和微软参考差分检查（包括 Windows；不需要 MoonBit 或 sh）：
+
+```sh
+python scripts/cli_test.py --cli dist/moonuf2.cjs
+python tests/differential.py --cli dist/moonuf2.cjs
+```
+
+`--cli` 的路径相对于调用目录解析；省略该选项仍会编译源码并检查调试产物。子进程输出按 UTF-8 解码，避免中文提示受系统默认编码影响。`check.sh` 同时检查源码编译结果与仓库中的发布产物。
 开发者运行 `bash scripts/build-release.sh` 可重新生成；发布前应再运行完整检查。
