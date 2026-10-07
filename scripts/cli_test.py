@@ -2,11 +2,13 @@
 """对已编译的 MoonBit 命令行程序执行黑盒测试；Python 不实现 UF2 编解码。
 
 运行方式：MOON=/path/to/moon python3 scripts/cli_test.py
+无需编译器检查已发布 CLI：python3 scripts/cli_test.py --cli dist/moonuf2.cjs
 所有格式转换均由实际的 MoonBit 可执行程序完成。Python 仅负责调用子进程、
 比较字节，以及修改输入以构造已知错误。
 """
 from __future__ import annotations
 
+import argparse
 import os
 from pathlib import Path
 import shutil
@@ -23,7 +25,7 @@ checks = 0
 def run(*args: str, ok: bool = True, contains: str = "", cwd: Path) -> subprocess.CompletedProcess:
     global checks
     process = subprocess.run([NODE, str(CLI), *map(str, args)], cwd=cwd,
-                             text=True, capture_output=True, timeout=20)
+                             text=True, encoding="utf-8", capture_output=True, timeout=20)
     assert (process.returncode == 0) == ok, (args, process.returncode, process.stdout, process.stderr)
     if contains:
         assert contains in process.stdout + process.stderr, (args, contains, process.stdout, process.stderr)
@@ -34,10 +36,21 @@ def run(*args: str, ok: bool = True, contains: str = "", cwd: Path) -> subproces
 
 
 def main() -> None:
-    global checks
-    assert shutil.which(MOON), "请将 MOON 设置为 MoonBit 可执行程序路径"
-    assert shutil.which(NODE), "需要安装 Node.js"
-    subprocess.run([MOON, "build", "--target", "js", "cmd/moonuf2", "--quiet"], cwd=ROOT, check=True)
+    global checks, CLI
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--cli", type=Path, help="直接测试指定的已编译 CLI；不调用 MoonBit 编译器")
+    options = parser.parse_args()
+    if not shutil.which(NODE):
+        parser.error("需要安装 Node.js，或通过 NODE 指定其路径")
+    if options.cli is not None:
+        # 在创建测试临时目录之前解析路径，保留调用方的相对路径语义。
+        CLI = options.cli.resolve()
+    else:
+        if not shutil.which(MOON):
+            parser.error("请通过 MOON 指定 MoonBit，或使用 --cli dist/moonuf2.cjs")
+        subprocess.run([MOON, "build", "--target", "js", "cmd/moonuf2", "--quiet"], cwd=ROOT, check=True)
+    if not CLI.is_file():
+        parser.error(f"已编译 CLI 文件不存在：{CLI}")
     with tempfile.TemporaryDirectory(prefix="moonuf2-cli-") as directory:
         work = Path(directory)
         def cli(*args: str, **kwargs):
@@ -84,6 +97,22 @@ def main() -> None:
         (work / "unaligned.bin").write_bytes(b"123")
         cli("convert", "unaligned.bin", "unaligned.uf2", "--from", "bin", "--to", "uf2", "--base", "0", ok=False, contains="uf2.alignment")
         (work / "tiny.bin").write_bytes(b"1234")
+        # 同一套检查也覆盖已发布产物的中文路径、空格和相对路径。
+        (work / "中文 空格目录").mkdir()
+        (work / "中文 空格目录/原始 固件.bin").write_bytes(b"1234")
+        cli("convert", "中文 空格目录/原始 固件.bin", "中文 空格目录/输出 固件.uf2", "--from", "bin", "--to", "uf2", "--base", "0")
+        cli("verify", "中文 空格目录/输出 固件.uf2", contains="校验通过")
+        cli("convert", "中文 空格目录/输出 固件.uf2", "中文 空格目录/还原 固件.bin", "--from", "uf2", "--to", "bin")
+        assert (work / "中文 空格目录/还原 固件.bin").read_bytes() == b"1234"
+        # UF2、HEX、S-record 均须保留恰好到达 32 位地址空间末端的数据。
+        for format in ["uf2", "hex", "srec"]:
+            cli("convert", "tiny.bin", f"end.{format}", "--from", "bin", "--to", format, "--base", "0xfffffffc", contains="结束地址（不包含）：0x100000000")
+            metadata = ["--discard-metadata"] if format == "srec" else []
+            cli("verify", f"end.{format}", "--from", format, *metadata)
+            cli("convert", f"end.{format}", f"end-{format}.bin", "--from", format, "--to", "bin", *metadata)
+            assert (work / f"end-{format}.bin").read_bytes() == b"1234"
+        cli("convert", "app.bin", "overflow.uf2", "--from", "bin", "--to", "uf2", "--base", "0xfffffffc", ok=False, contains="uf2.address_overflow")
+        assert not (work / "overflow.uf2").exists()
         cli("convert", "tiny.bin", "exact.hex", "--from", "bin", "--to", "hex", "--base", "0", "--max-bytes", "31")
         assert (work / "exact.hex").stat().st_size == 31
         cli("convert", "tiny.bin", "short.hex", "--from", "bin", "--to", "hex", "--base", "0", "--max-bytes", "30", ok=False, contains="io.output_limit")
@@ -130,11 +159,14 @@ def main() -> None:
         if hasattr(os, "mkfifo"):
             os.mkfifo(work / "input.fifo")
             cli("inspect", "input.fifo", ok=False, contains="io.input_type")
-        # 从仓库外目录调用启动脚本时，应保留调用方的相对路径语义。
-        process = subprocess.run(["sh", str(ROOT / "scripts/moonuf2"), "verify", "app.uf2"], cwd=work,
-                                 env={**os.environ, "MOON": MOON, "NODE": NODE}, capture_output=True, text=True, timeout=30)
-        assert process.returncode == 0, process.stderr
-        checks += 1
+        if options.cli is None:
+            # 源码模式仍检查启动脚本；产物模式使用 Node，不依赖 sh 或 MoonBit。
+            process = subprocess.run(["sh", str(ROOT / "scripts/moonuf2"), "verify", "app.uf2"], cwd=work,
+                                     env={**os.environ, "MOON": MOON, "NODE": NODE}, capture_output=True,
+                                     text=True, encoding="utf-8", timeout=30)
+            assert process.returncode == 0, process.stderr
+            checks += 1
+    print(f"已测试 CLI：{CLI}")
     print(f"命令行端到端测试：{checks} 项检查全部通过")
 
 
