@@ -28,7 +28,7 @@ jobs:
           node-version: '24.19.0'
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.12.14'
+          python-version: '3.12.10' # 3.12 最后提供 Windows 安装包的完整维护版
       - name: 在 Windows 检查已发布 CLI，无需 MoonBit 编译器
         env:
           PYTHONIOENCODING: utf-8
