@@ -19,3 +19,19 @@ jobs:
           echo "MOON_HOME=$RUNNER_TEMP/moonuf2-moon" >> "$GITHUB_ENV"
           echo "$RUNNER_TEMP/moonuf2-moon/bin" >> "$GITHUB_PATH"
       - run: bash scripts/check.sh
+  release-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.19.0'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.14'
+      - name: 在 Windows 检查已发布 CLI，无需 MoonBit 编译器
+        env:
+          PYTHONIOENCODING: utf-8
+        run: |
+          python scripts/cli_test.py --cli dist/moonuf2.cjs
+          python tests/differential.py --cli dist/moonuf2.cjs
