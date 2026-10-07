@@ -1,22 +1,29 @@
 #!/usr/bin/env python3
-"""将双方共有的格式子集与固定版本、未经修改的微软参考实现对照。"""
+"""将共有格式子集与原始微软参考实现对照；--cli 可直接检查已编译产物。"""
+import argparse
 import contextlib
 import importlib.util
 import io
+import os
 from pathlib import Path
 import random
+import shutil
 import subprocess
+import sys
 import tempfile
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
+CLI = ROOT / '_build/js/debug/build/cmd/moonuf2/moonuf2.js'
+NODE = os.environ.get('NODE', 'node')
 spec = importlib.util.spec_from_file_location('uf2_reference', ROOT / 'tests/reference/uf2conv.py')
 ref = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(ref)
 
 class DifferentialTests(unittest.TestCase):
     def run_cli(self, *args):
-        result = subprocess.run(['sh', str(ROOT/'scripts/moonuf2'), *map(str,args)], capture_output=True, text=True)
+        result = subprocess.run([NODE, str(CLI), *map(str,args)], capture_output=True,
+                                text=True, encoding='utf-8', timeout=20)
         self.assertEqual(result.returncode,0,result.stdout+result.stderr)
 
     def test_reference_compatibility(self):
@@ -56,4 +63,20 @@ class DifferentialTests(unittest.TestCase):
             self.assertNotEqual((folder/'out.uf2').read_bytes(),ref.convert_to_uf2(data))
 
 if __name__ == '__main__':
-    unittest.main(verbosity=2)
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--cli', type=Path, help='直接测试指定的已编译 CLI；不调用 MoonBit 编译器')
+    options, unittest_args = parser.parse_known_args()
+    if not shutil.which(NODE):
+        parser.error('需要安装 Node.js，或通过 NODE 指定其路径')
+    if options.cli is not None:
+        CLI = options.cli.resolve()
+    else:
+        moon = os.environ.get('MOON', 'moon')
+        if not shutil.which(moon):
+            parser.error('请通过 MOON 指定 MoonBit，或使用 --cli dist/moonuf2.cjs')
+        # 每次测试运行只编译一次，随后直接调用同一个真实 CLI。
+        subprocess.run([moon, 'build', '--target', 'js', 'cmd/moonuf2', '--quiet'], cwd=ROOT, check=True)
+    if not CLI.is_file():
+        parser.error(f'已编译 CLI 文件不存在：{CLI}')
+    print(f'已测试 CLI：{CLI}', flush=True)
+    unittest.main(argv=[sys.argv[0], *unittest_args], verbosity=2)
