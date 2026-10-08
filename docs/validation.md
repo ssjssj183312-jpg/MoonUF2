@@ -1,5 +1,29 @@
 # 本地验证记录
 
+## 2026-10-08：修复合法长输出文件名转换失败
+
+本轮从远端 `main` 的 `4cc7e942b4fd84b86087d42ebb909f8d293201d8` 开始。旧 CLI 在输出目录中使用“完整输出文件名 + 26 字节后缀”作为临时文件名，导致文件系统本来支持的长文件名仍报 `ENAMETOOLONG`。现改为同目录的固定长度随机临时名称，保留独占创建、完整写入后发布和拒绝覆盖已有路径的行为。
+
+回归用例使用 80 个汉字加 `.uf2`（244 个 UTF-8 字节；Windows 中仅 84 个 UTF-16 字符），检查转换、校验、BIN 往返、拒绝覆盖且原文件不变、临时文件清理；另检查已有目录不被替换且失败后无临时文件残留。新增用例先在旧发布 CLI 上复现失败，再用修改后的源码与重新构建的发布 CLI 验证通过。
+
+实际执行环境为 Linux x86_64、MoonBit moon 0.1.20260920 / moonc v0.10.14+7d59c7ec9、Node.js v24.19.0、Python 3.12.14。工具链从官方源重新下载，两个归档的锁定 SHA-256 均匹配，安装成功。
+
+```sh
+bash scripts/build-release.sh
+bash scripts/check.sh
+python3 -m py_compile scripts/cli_test.py tests/differential.py
+bash -n scripts/check.sh scripts/build-release.sh scripts/install-toolchain.sh
+sha256sum -c MANIFEST.sha256
+```
+
+- 类型检查通过；JS、Wasm GC、native 库测试分别 42/42 通过
+- 源码 CLI 76 项检查、发布 CLI 75 项检查全部通过；两种 CLI 的微软参考差分各 2 个测试方法通过
+- Python/Bash 语法检查、第三方来源哈希及更新后的 57 文件清单哈希通过
+- 发布 CLI 从修改后的 MoonBit 源码重新编译；其差异仅为相同的一行临时文件命名修复，未手工修改构建产物
+- 原有 MoonBit 派生方法弃用警告仍存在，不是测试失败；未更改第三方源码、格式算法、硬件操作范围或安全设置
+
+本节是本地实际验证记录；Windows 行为由现有 `release-windows` CI 作业验证，本节不冒充本地 Windows 测试。最终远程状态须查看本轮最终提交的 Actions。
+
 ## 2026-10-07：发布 CLI 的 Windows 回归入口
 
 本轮从远端 `main` 的 `1dc4007891d8f1f9c1a9857a6be33d0948ca8911` 开始，增加 `--cli` 参数，让 CLI 和微软参考差分测试能直接运行指定的预编译文件。默认模式仍编译源码；差分测试每次运行只编译一次。中文子进程输出明确按 UTF-8 解码，解决 Windows 默认 CP936 解码失败的问题。
