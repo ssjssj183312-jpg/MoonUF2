@@ -86,7 +86,7 @@ def main() -> None:
         assert (work / "restored.bin").read_bytes() == data
         cli("convert", "app.uf2", "restored.bin", "--from", "uf2", "--to", "bin", "--discard-metadata", ok=False, contains="io.write")
         assert (work / "restored.bin").read_bytes() == data
-        assert not list(work.glob(".*.moonuf2-*")), "临时输出文件未清理"
+        assert not list(work.glob(".moonuf2-*")), "临时输出文件未清理"
         cli("inspect", "app.uf2", "--max-bytes", "512", ok=False, contains="io.input_limit")
         cli("convert", "app.bin", "too-big.uf2", "--from", "bin", "--to", "uf2", "--base", "0", "--max-bytes", "300", ok=False, contains="io.output_limit")
         assert not (work / "too-big.uf2").exists()
@@ -97,6 +97,22 @@ def main() -> None:
         (work / "unaligned.bin").write_bytes(b"123")
         cli("convert", "unaligned.bin", "unaligned.uf2", "--from", "bin", "--to", "uf2", "--base", "0", ok=False, contains="uf2.alignment")
         (work / "tiny.bin").write_bytes(b"1234")
+        # 80 个汉字加扩展名为 244 个 UTF-8 字节，仍是常见文件系统的合法名称。
+        # 临时文件名不能再拼接完整输出名，否则会先触发 ENAMETOOLONG。
+        long_name = "固件" * 40 + ".uf2"
+        cli("convert", "tiny.bin", long_name, "--from", "bin", "--to", "uf2", "--base", "0")
+        cli("verify", long_name, contains="校验通过")
+        cli("convert", long_name, "long-name.bin", "--from", "uf2", "--to", "bin")
+        assert (work / "long-name.bin").read_bytes() == b"1234"
+        saved_long_output = (work / long_name).read_bytes()
+        cli("convert", "tiny.bin", long_name, "--from", "bin", "--to", "uf2", "--base", "0", ok=False, contains="EEXIST")
+        assert (work / long_name).read_bytes() == saved_long_output
+        assert not list(work.glob(".moonuf2-*")), "长文件名转换后仍有临时输出文件"
+        # 发布到已有目录也必须拒绝，并清理已完整写入的临时文件。
+        (work / "existing-directory").mkdir()
+        cli("convert", "tiny.bin", "existing-directory", "--from", "bin", "--to", "uf2", "--base", "0", ok=False, contains="io.write")
+        assert (work / "existing-directory").is_dir()
+        assert not list(work.glob(".moonuf2-*")), "发布失败后仍有临时输出文件"
         # 同一套检查也覆盖已发布产物的中文路径、空格和相对路径。
         (work / "中文 空格目录").mkdir()
         (work / "中文 空格目录/原始 固件.bin").write_bytes(b"1234")
