@@ -455,7 +455,7 @@ const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf211write__file = (path, bytes
    let temporary;
    let created = false;
    try {
-     temporary = p.join(p.dirname(path), '.' + p.basename(path) + '.moonuf2-' + require('node:crypto').randomBytes(8).toString('hex'));
+     temporary = p.join(p.dirname(path), '.moonuf2-' + require('node:crypto').randomBytes(8).toString('hex'));
      const fd = fs.openSync(temporary, 'wx', 0o600);
      created = true;
      try { fs.writeFileSync(fd, bytes); fs.fsyncSync(fd); }
