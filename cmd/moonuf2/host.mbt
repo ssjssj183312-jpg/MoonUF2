@@ -58,6 +58,7 @@ extern "js" fn ReadResult::bytes(self : ReadResult) -> Bytes =
 
 ///|
 /// 在目标目录完整写入临时文件，再发布结果；不替换任何已有路径。
+/// 临时文件使用固定长度的随机名称，避免合法的长输出文件名被额外后缀撑破上限。
 extern "js" fn write_file(path : String, bytes : Bytes) -> String =
   #| (path, bytes) => {
   #|   const fs = require('node:fs');
@@ -65,7 +66,7 @@ extern "js" fn write_file(path : String, bytes : Bytes) -> String =
   #|   let temporary;
   #|   let created = false;
   #|   try {
-  #|     temporary = p.join(p.dirname(path), '.' + p.basename(path) + '.moonuf2-' + require('node:crypto').randomBytes(8).toString('hex'));
+  #|     temporary = p.join(p.dirname(path), '.moonuf2-' + require('node:crypto').randomBytes(8).toString('hex'));
   #|     const fd = fs.openSync(temporary, 'wx', 0o600);
   #|     created = true;
   #|     try { fs.writeFileSync(fd, bytes); fs.fsyncSync(fd); }
