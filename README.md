@@ -56,7 +56,7 @@ sh scripts/moonuf2 convert app.srec from-srec.uf2 --from srec --to uf2 --discard
 1. 仅支持 flags=0 或 0x2000（family ID）。not-main-flash、file container、MD5、extension tags、未知位一律返回明确错误，不静默略过。多 family 拼接也拒绝；这是严格子集工具，不是所有 UF2 的完整实现。
 2. `numBlocks` 必须非零且所有块一致；blockNo 范围为 0..numBlocks-1。不同 blockNo 的任何地址重叠都拒绝，即使数据相同。
 3. 没有 family 标志时，文件大小/family 字段必须为零。可接受未指定 family 的普通文件；传 `--family` 后要求文件携带且匹配该 ID。匹配 family 仍不能证明板型/硬件配置正确。
-4. 输入 UF2、输入 BIN、生成 UF2、展开 BIN 均有 16 MiB 硬上限。CLI 输入/输出默认 16 MiB，可调小，不能调大。稀疏数据地址仍可覆盖整个 32 位空间；展开超过上限的 BIN 被拒绝。这是逻辑数据上限，不是进程总内存上限；实现暂非流式。
+4. 输入 UF2、输入 BIN、生成 UF2、展开 BIN 均有 16 MiB 硬上限。CLI 输入/输出默认 16 MiB，可调小，不能调大。HEX/S-record 输出限额按合并相邻数据段后的实际文本长度计算：恰好达到限额可接受，不会因 UF2 分块而误报超限；稀疏空洞仍保留。稀疏数据地址仍可覆盖整个 32 位空间；展开超过上限的 BIN 被拒绝。这是逻辑数据上限，不是进程总内存上限；实现暂非流式。
 5. 不隐式对齐、补齐或移动数据。非 4 字节对齐 BIN/文本数据不能直接生成 UF2。末块可小于 256 字节，但必须对齐；微软参考脚本会补零到 256，二者该场景不逐字节相同。
 6. UF2 不存入口地址/S-record header，BIN/HEX/Srec 不存 UF2 family。会丢失这些信息的转换默认拒绝，需 `--discard-metadata`；S-record 终止记录始终含入口地址，因此导入也需该选项。导出 Srec 未显式指定入口时，底层写零，此值不是推测的启动入口。库 API 可显式提供新入口；详见 [adapter 文档](adapter/README.md)。
 7. 稀疏空洞没有被声明为真实数据；只有 BIN 展开时才填充。工具不能推断 ELF section、芯片布局、擦除页规则或板级要求，也不保留原始文本排版和记录分块。
