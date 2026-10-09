@@ -135,6 +135,42 @@ def main() -> None:
         cli("convert", "tiny.bin", "exact.srec", "--from", "bin", "--to", "srec", "--base", "0", "--max-bytes", "40")
         assert (work / "exact.srec").stat().st_size == 40
         cli("convert", "tiny.bin", "short.srec", "--from", "bin", "--to", "srec", "--base", "0", "--max-bytes", "39", ok=False, contains="io.output_limit")
+        # UF2 的 476 字节块不对齐 HEX/S-record 的记录宽度；导出器会合并相邻块。
+        # 限额恰好等于实际文本大小时必须成功，少一个字节时必须拒绝。
+        quota_data = bytes(i % 256 for i in range(3808))
+        (work / "quota.bin").write_bytes(quota_data)
+        for case, base in [("contiguous", 0), ("boundary", 0xfffc),
+                           ("end", 0xfffff120), ("sparse", 0)]:
+            input_name = f"quota-{case}.uf2"
+            cli("convert", "quota.bin", input_name, "--from", "bin", "--to", "uf2",
+                "--base", str(base), "--payload-size", "476")
+            expected_data = quota_data
+            if case == "sparse":
+                fragmented = bytearray((work / input_name).read_bytes())
+                for block in range(4, 8):
+                    offset = block * 512 + 12
+                    address = int.from_bytes(fragmented[offset:offset + 4], "little")
+                    fragmented[offset:offset + 4] = (address + 4).to_bytes(4, "little")
+                (work / input_name).write_bytes(fragmented)
+                expected_data = quota_data[:1904] + b"\xff" * 4 + quota_data[1904:]
+            for format in ["hex", "srec"]:
+                reference = f"quota-{case}-reference.{format}"
+                exact = f"quota-{case}-exact.{format}"
+                short = f"quota-{case}-short.{format}"
+                cli("convert", input_name, reference, "--from", "uf2", "--to", format)
+                expected_text = (work / reference).read_bytes()
+                cli("convert", input_name, exact, "--from", "uf2", "--to", format,
+                    "--max-bytes", str(len(expected_text)))
+                assert (work / exact).read_bytes() == expected_text
+                cli("convert", input_name, short, "--from", "uf2", "--to", format,
+                    "--max-bytes", str(len(expected_text) - 1), ok=False, contains="io.output_limit")
+                assert not (work / short).exists()
+                metadata = ["--discard-metadata"] if format == "srec" else []
+                restored = f"quota-{case}-{format}.bin"
+                cli("convert", exact, restored, "--from", format, "--to", "bin", *metadata,
+                    contains=f"起始地址：0x{base:x}")
+                assert (work / restored).read_bytes() == expected_data
+            assert not list(work.glob(".moonuf2-*")), "文本限额检查留下临时输出文件"
         damaged = bytearray((work / "app.uf2").read_bytes())
         damaged[0] ^= 1
         (work / "broken.uf2").write_bytes(damaged)
