@@ -484,23 +484,23 @@ const _M0FP092moonbitlang_2fcore_2fbuiltin_2fStringBuilder_24as_24_40moonbitlang
 const _M0FP418ssjssj183312_2djpg7moonuf26vendor8firmware14hex__characterN6digitsS118 = "0123456789ABCDEF";
 const _M0FP318ssjssj183312_2djpg7moonuf27adapter19check__byte__budgetN6constrS421 = new _M0DTP318ssjssj183312_2djpg7moonuf27adapter12AdapterError13ResourceLimit("镜像的实际数据量超出适配层的 16 MiB 上限");
 const _M0FP318ssjssj183312_2djpg7moonuf27adapter19check__byte__budgetN6constrS422 = new _M0DTPC16result6ResultGiRP318ssjssj183312_2djpg7moonuf27adapter12AdapterErrorE3Err(_M0FP318ssjssj183312_2djpg7moonuf27adapter19check__byte__budgetN6constrS421);
-const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25usageN4helpS94 = "MoonUF2 0.1.0：严格校验、检查和转换固件文件（不会烧录设备）\n\n用法：\n  moonuf2 inspect 输入文件 [--from uf2|bin|hex|srec] [选项]\n  moonuf2 verify 输入文件 [--from uf2|bin|hex|srec] [选项]\n  moonuf2 convert 输入文件 输出文件 --from 格式 --to 格式 [选项]\n\n选项：\n  --base 数值           BIN 输入的必填起始地址（十进制或 0x 十六进制）\n  --family 数值         UF2 输入的预期芯片家族标识；其他输入设置该标识\n  --max-bytes 数值      输入/输出上限，默认 16777216（16 MiB），最高 16 MiB\n  --payload-size 数值   UF2 输出块有效载荷，默认 256；4..476，且为 4 的倍数\n  --fill 数值           BIN 输出空洞填充值，默认 255；0..255\n  --discard-metadata    明确允许丢弃入口地址、头信息、芯片家族标识等不可表示元数据\n  --                    结束选项解析（用于以 - 开头的文件名）\n  --help                显示帮助\n  --version             显示版本\n\n转换必须显式指定 --from 和 --to；不按文件扩展名猜测。\n输出文件必须不存在；已有文件不会覆盖。HEX/S-record 使用 MoonBit 上游库。\nBIN 输出从最低地址开始，空洞填充；请保留输出中报告的起始地址。\n严格 UF2 仅支持普通主闪存数据与可选芯片家族标识；地址和长度须 4 字节对齐。\n当前 HEX/S-record 检查也使用严格图像适配器；入口点/头信息需 --discard-metadata。\n校验仅检查文件结构，不保证设备兼容性、固件真实性或可安全烧录。\n\n示例：\n  moonuf2 convert app.bin app.uf2 --from bin --to uf2 --base 0x10000000 --family 0xe48bff56\n  moonuf2 verify app.uf2 --family 0xe48bff56\n  moonuf2 convert app.uf2 restored.bin --from uf2 --to bin --discard-metadata";
-const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf26numberN7_2abindS97 = "0x";
-const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf26numberN7_2abindS98 = "0X";
-const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN7_2abindS100 = "--";
-const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN7_2abindS101 = "-";
+const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25usageN4helpS98 = "MoonUF2 0.1.0：严格校验、检查和转换固件文件（不会烧录设备）\n\n用法：\n  moonuf2 inspect 输入文件 [--from uf2|bin|hex|srec] [选项]\n  moonuf2 verify 输入文件 [--from uf2|bin|hex|srec] [选项]\n  moonuf2 convert 输入文件 输出文件 --from 格式 --to 格式 [选项]\n\n选项：\n  --base 数值           BIN 输入的必填起始地址（十进制或 0x 十六进制）\n  --family 数值         UF2 输入的预期芯片家族标识；其他输入设置该标识\n  --max-bytes 数值      输入/输出上限，默认 16777216（16 MiB），最高 16 MiB\n  --payload-size 数值   UF2 输出块有效载荷，默认 256；4..476，且为 4 的倍数\n  --fill 数值           BIN 输出空洞填充值，默认 255；0..255\n  --discard-metadata    明确允许丢弃入口地址、头信息、芯片家族标识等不可表示元数据\n  --                    结束选项解析（用于以 - 开头的文件名）\n  --help                显示帮助\n  --version             显示版本\n\n转换必须显式指定 --from 和 --to；不按文件扩展名猜测。\n输出文件必须不存在；已有文件不会覆盖。HEX/S-record 使用 MoonBit 上游库。\nBIN 输出从最低地址开始，空洞填充；请保留输出中报告的起始地址。\n严格 UF2 仅支持普通主闪存数据与可选芯片家族标识；地址和长度须 4 字节对齐。\n当前 HEX/S-record 检查也使用严格图像适配器；入口点/头信息需 --discard-metadata。\n校验仅检查文件结构，不保证设备兼容性、固件真实性或可安全烧录。\n\n示例：\n  moonuf2 convert app.bin app.uf2 --from bin --to uf2 --base 0x10000000 --family 0xe48bff56\n  moonuf2 verify app.uf2 --family 0xe48bff56\n  moonuf2 convert app.uf2 restored.bin --from uf2 --to bin --discard-metadata";
+const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf26numberN7_2abindS101 = "0x";
+const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf26numberN7_2abindS102 = "0X";
+const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN7_2abindS104 = "--";
+const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN7_2abindS105 = "-";
 const _M0FPB4seed = _M0FPB12random__seed();
-const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf26numberN6constrS217 = new _M0DTPC16result6ResultGmsE3Err("cli.number: 数值为空");
-const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS218 = new _M0DTPC16result6ResultGRP418ssjssj183312_2djpg7moonuf23cmd7moonuf26ConfigsE3Err("cli.format: convert 必须显式指定 --from 和 --to");
-const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS219 = new _M0DTPC16result6ResultGRP418ssjssj183312_2djpg7moonuf23cmd7moonuf26ConfigsE3Err("cli.option: --to / --payload-size / --fill 仅适用于 convert");
-const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS220 = new _M0DTPC16result6ResultGRP418ssjssj183312_2djpg7moonuf23cmd7moonuf26ConfigsE3Err("cli.format: 格式必须是 uf2、bin、hex 或 srec");
-const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS221 = new _M0DTPC16result6ResultGRP418ssjssj183312_2djpg7moonuf23cmd7moonuf26ConfigsE3Err("cli.base: BIN 输入必须显式提供 --base；不会猜测地址");
-const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS222 = new _M0DTPC16result6ResultGRP418ssjssj183312_2djpg7moonuf23cmd7moonuf26ConfigsE3Err("cli.base: --base 仅适用于 BIN 输入；其他格式已有地址");
-const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS223 = new _M0DTPC16result6ResultGRP418ssjssj183312_2djpg7moonuf23cmd7moonuf26ConfigsE3Err("cli.limit: --max-bytes 必须在 1..16777216 范围内");
-const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS224 = new _M0DTPC16result6ResultGRP418ssjssj183312_2djpg7moonuf23cmd7moonuf26ConfigsE3Err("cli.payload: --payload-size 必须在 4..476 内且为 4 的倍数");
-const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS225 = new _M0DTPC16result6ResultGRP418ssjssj183312_2djpg7moonuf23cmd7moonuf26ConfigsE3Err("cli.payload: --payload-size 仅适用于 UF2 输出");
-const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS226 = new _M0DTPC16result6ResultGRP418ssjssj183312_2djpg7moonuf23cmd7moonuf26ConfigsE3Err("cli.fill: --fill 必须在 0..255 范围内");
-const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS227 = new _M0DTPC16result6ResultGRP418ssjssj183312_2djpg7moonuf23cmd7moonuf26ConfigsE3Err("cli.fill: --fill 仅适用于 BIN 输出");
+const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf26numberN6constrS234 = new _M0DTPC16result6ResultGmsE3Err("cli.number: 数值为空");
+const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS235 = new _M0DTPC16result6ResultGRP418ssjssj183312_2djpg7moonuf23cmd7moonuf26ConfigsE3Err("cli.format: convert 必须显式指定 --from 和 --to");
+const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS236 = new _M0DTPC16result6ResultGRP418ssjssj183312_2djpg7moonuf23cmd7moonuf26ConfigsE3Err("cli.option: --to / --payload-size / --fill 仅适用于 convert");
+const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS237 = new _M0DTPC16result6ResultGRP418ssjssj183312_2djpg7moonuf23cmd7moonuf26ConfigsE3Err("cli.format: 格式必须是 uf2、bin、hex 或 srec");
+const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS238 = new _M0DTPC16result6ResultGRP418ssjssj183312_2djpg7moonuf23cmd7moonuf26ConfigsE3Err("cli.base: BIN 输入必须显式提供 --base；不会猜测地址");
+const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS239 = new _M0DTPC16result6ResultGRP418ssjssj183312_2djpg7moonuf23cmd7moonuf26ConfigsE3Err("cli.base: --base 仅适用于 BIN 输入；其他格式已有地址");
+const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS240 = new _M0DTPC16result6ResultGRP418ssjssj183312_2djpg7moonuf23cmd7moonuf26ConfigsE3Err("cli.limit: --max-bytes 必须在 1..16777216 范围内");
+const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS241 = new _M0DTPC16result6ResultGRP418ssjssj183312_2djpg7moonuf23cmd7moonuf26ConfigsE3Err("cli.payload: --payload-size 必须在 4..476 内且为 4 的倍数");
+const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS242 = new _M0DTPC16result6ResultGRP418ssjssj183312_2djpg7moonuf23cmd7moonuf26ConfigsE3Err("cli.payload: --payload-size 仅适用于 UF2 输出");
+const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS243 = new _M0DTPC16result6ResultGRP418ssjssj183312_2djpg7moonuf23cmd7moonuf26ConfigsE3Err("cli.fill: --fill 必须在 0..255 范围内");
+const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS244 = new _M0DTPC16result6ResultGRP418ssjssj183312_2djpg7moonuf23cmd7moonuf26ConfigsE3Err("cli.fill: --fill 仅适用于 BIN 输出");
 const _M0FP318ssjssj183312_2djpg7moonuf27adapter12check__rangeN6constrS419 = new _M0DTP318ssjssj183312_2djpg7moonuf27adapter12AdapterError12InvalidImage("数据范围超出 32 位 UF2 地址空间");
 const _M0FP318ssjssj183312_2djpg7moonuf27adapter12check__rangeN6constrS420 = new _M0DTPC16result6ResultGuRP318ssjssj183312_2djpg7moonuf27adapter12AdapterErrorE3Err(_M0FP318ssjssj183312_2djpg7moonuf27adapter12check__rangeN6constrS419);
 const _M0FP418ssjssj183312_2djpg7moonuf26vendor8firmware30validate__intel__record__shapeN6constrS895 = 0;
@@ -537,19 +537,19 @@ const _M0FP418ssjssj183312_2djpg7moonuf26vendor8firmware22parse__srecord_2einner
 const _M0FP418ssjssj183312_2djpg7moonuf26vendor8firmware24parse__srecord__documentN6constrS887 = 0n;
 const _M0FP318ssjssj183312_2djpg7moonuf27adapter26srecord__to__image_2einnerN6constrS433 = new _M0DTP318ssjssj183312_2djpg7moonuf27adapter12AdapterError12MetadataLoss("UF2 无法保留 S-record 头记录或入口地址；如需继续，请显式启用 discard_metadata");
 const _M0FP318ssjssj183312_2djpg7moonuf27adapter26srecord__to__image_2einnerN6constrS434 = new _M0DTPC16result6ResultGRP218ssjssj183312_2djpg7moonuf25ImageRP318ssjssj183312_2djpg7moonuf27adapter12AdapterErrorE3Err(_M0FP318ssjssj183312_2djpg7moonuf27adapter26srecord__to__image_2einnerN6constrS433);
-const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf211load__imageN6constrS228 = new _M0DTPC16result6ResultGRP218ssjssj183312_2djpg7moonuf25ImagesE3Err("text.ascii: HEX/S-record 输入必须是 ASCII 文本");
-const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf211load__imageN6constrS229 = new _M0DTPC16result6ResultGRP218ssjssj183312_2djpg7moonuf25ImagesE3Err("cli.format: 不支持的输入格式");
+const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf211load__imageN6constrS245 = new _M0DTPC16result6ResultGRP218ssjssj183312_2djpg7moonuf25ImagesE3Err("text.ascii: HEX/S-record 输入必须是 ASCII 文本");
+const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf211load__imageN6constrS246 = new _M0DTPC16result6ResultGRP218ssjssj183312_2djpg7moonuf25ImagesE3Err("cli.format: 不支持的输入格式");
 const _M0FP318ssjssj183312_2djpg7moonuf27adapter27to__firmware__image_2einnerN6constrS427 = new _M0DTP318ssjssj183312_2djpg7moonuf27adapter12AdapterError12MetadataLoss("Intel HEX 和 S-record 无法保留 UF2 芯片家族 ID；如需继续，请显式启用 discard_metadata");
 const _M0FP318ssjssj183312_2djpg7moonuf27adapter27to__firmware__image_2einnerN6constrS428 = new _M0DTPC16result6ResultGRP418ssjssj183312_2djpg7moonuf26vendor8firmware13FirmwareImageRP318ssjssj183312_2djpg7moonuf27adapter12AdapterErrorE3Err(_M0FP318ssjssj183312_2djpg7moonuf27adapter27to__firmware__image_2einnerN6constrS427);
 const _M0FP318ssjssj183312_2djpg7moonuf27adapter27to__firmware__image_2einnerN6constrS429 = new _M0DTP318ssjssj183312_2djpg7moonuf27adapter12AdapterError12InvalidImage("入口地址超出 32 位地址空间");
 const _M0FP318ssjssj183312_2djpg7moonuf27adapter27to__firmware__image_2einnerN6constrS430 = new _M0DTPC16result6ResultGRP418ssjssj183312_2djpg7moonuf26vendor8firmware13FirmwareImageRP318ssjssj183312_2djpg7moonuf27adapter12AdapterErrorE3Err(_M0FP318ssjssj183312_2djpg7moonuf27adapter27to__firmware__image_2einnerN6constrS429);
 const _M0FP318ssjssj183312_2djpg7moonuf27adapter27to__firmware__image_2einnerN6constrS431 = new _M0DTP318ssjssj183312_2djpg7moonuf27adapter12AdapterError12InvalidImage("镜像包含空数据段");
 const _M0FP318ssjssj183312_2djpg7moonuf27adapter27to__firmware__image_2einnerN6constrS432 = new _M0DTPC16result6ResultGRP418ssjssj183312_2djpg7moonuf26vendor8firmware13FirmwareImageRP318ssjssj183312_2djpg7moonuf27adapter12AdapterErrorE3Err(_M0FP318ssjssj183312_2djpg7moonuf27adapter27to__firmware__image_2einnerN6constrS431);
-const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf213output__bytesN6constrS230 = new _M0DTPC16result6ResultGzsE3Err("io.output_limit: 文本输出超过 --max-bytes 安全上界");
-const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf213output__bytesN6constrS231 = new _M0DTPC16result6ResultGzsE3Err("io.output_limit: UF2 输出超过 --max-bytes 限制");
-const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf213output__bytesN6constrS232 = new _M0DTPC16result6ResultGzsE3Err("adapter.metadata_loss: BIN 不保存芯片家族标识；请明确使用 --discard-metadata");
-const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf213output__bytesN6constrS233 = new _M0DTPC16result6ResultGzsE3Err("cli.format: 不支持的输出格式");
-const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf23runN6constrS234 = new _M0DTPC16result6ResultGusE3Err("io.output_limit: 输出超过 --max-bytes 限制");
+const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf213output__bytesN6constrS247 = new _M0DTPC16result6ResultGzsE3Err("io.output_limit: 文本输出超过 --max-bytes 安全上界");
+const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf213output__bytesN6constrS248 = new _M0DTPC16result6ResultGzsE3Err("io.output_limit: UF2 输出超过 --max-bytes 限制");
+const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf213output__bytesN6constrS249 = new _M0DTPC16result6ResultGzsE3Err("adapter.metadata_loss: BIN 不保存芯片家族标识；请明确使用 --discard-metadata");
+const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf213output__bytesN6constrS250 = new _M0DTPC16result6ResultGzsE3Err("cli.format: 不支持的输出格式");
+const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf23runN6constrS251 = new _M0DTPC16result6ResultGusE3Err("io.output_limit: 输出超过 --max-bytes 限制");
 function _M0FPB13consume4__acc(acc, input) {
   const _p = (acc >>> 0) + ((Math.imul(input, -1028477379) | 0) >>> 0) | 0;
   const _p$2 = 17;
@@ -1521,6 +1521,16 @@ function _M0MPC15array12MutArrayView5sliceGRP218ssjssj183312_2djpg7moonuf27Segme
     $panic();
   }
   return new _M0TPB12MutArrayViewGRP218ssjssj183312_2djpg7moonuf27SegmentE(arr.buf, start + arr.start | 0, end + arr.start | 0);
+}
+function _M0MPC15array5Array3setGUmmEE(self, index, value) {
+  const len = self.length;
+  if (index >= 0 && index < len) {
+    self[index] = value;
+    return;
+  } else {
+    $panic();
+    return;
+  }
 }
 function _M0MPC15array5Array3setGyE(self, index, value) {
   const len = self.length;
@@ -4369,13 +4379,13 @@ function _M0FP318ssjssj183312_2djpg7moonuf27adapter18image__to__srecord(image, r
   return _M0FP318ssjssj183312_2djpg7moonuf27adapter26image__to__srecord_2einner(image, record_bytes, entry_point, header, discard_metadata);
 }
 function _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25usage() {
-  _M0FPB7printlnGsE(_M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25usageN4helpS94);
+  _M0FPB7printlnGsE(_M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25usageN4helpS98);
 }
 function _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf26number(text) {
-  const hex = _M0MPC16string6String11has__prefix(text, new _M0TPC16string10StringView(_M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf26numberN7_2abindS97, 0, _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf26numberN7_2abindS97.length)) || _M0MPC16string6String11has__prefix(text, new _M0TPC16string10StringView(_M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf26numberN7_2abindS98, 0, _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf26numberN7_2abindS98.length));
+  const hex = _M0MPC16string6String11has__prefix(text, new _M0TPC16string10StringView(_M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf26numberN7_2abindS101, 0, _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf26numberN7_2abindS101.length)) || _M0MPC16string6String11has__prefix(text, new _M0TPC16string10StringView(_M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf26numberN7_2abindS102, 0, _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf26numberN7_2abindS102.length));
   const start = hex ? 2 : 0;
   if (text.length === start) {
-    return _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf26numberN6constrS217;
+    return _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf26numberN6constrS234;
   }
   const radix = hex ? 16n : 10n;
   let value = 0n;
@@ -4458,7 +4468,7 @@ function _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parse(args) {
                 _tmp$3 = true;
               } else {
                 const _tmp$4 = i + 1 | 0;
-                _tmp$3 = _M0MPC16string6String11has__prefix(_tmp$4 >>> 0 < args.length ? args[_tmp$4] : $oob(), new _M0TPC16string10StringView(_M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN7_2abindS100, 0, _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN7_2abindS100.length));
+                _tmp$3 = _M0MPC16string6String11has__prefix(_tmp$4 >>> 0 < args.length ? args[_tmp$4] : $oob(), new _M0TPC16string10StringView(_M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN7_2abindS104, 0, _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN7_2abindS104.length));
               }
               if (_tmp$3) {
                 return new _M0DTPC16result6ResultGRP418ssjssj183312_2djpg7moonuf23cmd7moonuf26ConfigsE3Err(`cli.value: 选项缺少值：${arg}`);
@@ -4467,7 +4477,7 @@ function _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parse(args) {
               const _tmp$4 = i;
               _M0MPB3Map3setGssE(values, arg, _tmp$4 >>> 0 < args.length ? args[_tmp$4] : $oob());
             } else {
-              if (_M0MPC16string6String11has__prefix(arg, new _M0TPC16string10StringView(_M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN7_2abindS101, 0, _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN7_2abindS101.length))) {
+              if (_M0MPC16string6String11has__prefix(arg, new _M0TPC16string10StringView(_M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN7_2abindS105, 0, _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN7_2abindS105.length))) {
                 return new _M0DTPC16result6ResultGRP418ssjssj183312_2djpg7moonuf23cmd7moonuf26ConfigsE3Err(`cli.option: 未知选项：${arg}`);
               } else {
                 _M0MPC15array5Array4pushGsE(paths, arg);
@@ -4487,7 +4497,7 @@ function _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parse(args) {
     return new _M0DTPC16result6ResultGRP418ssjssj183312_2djpg7moonuf23cmd7moonuf26ConfigsE3Err(`cli.arguments: ${command} 需要 ${_M0MPC13int3Int18to__string_2einner(expected_paths, 10)} 个文件路径`);
   }
   if (command === "convert" && (!_M0MPB3Map8containsGssE(values, "--from") || !_M0MPB3Map8containsGssE(values, "--to"))) {
-    return _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS218;
+    return _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS235;
   }
   let _tmp$2;
   const _p$2 = "convert";
@@ -4497,12 +4507,12 @@ function _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parse(args) {
     _tmp$2 = false;
   }
   if (_tmp$2) {
-    return _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS219;
+    return _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS236;
   }
   const from_format = _M0MPC16option6Option10unwrap__orGsE(_M0MPB3Map3getGssE(values, "--from"), "uf2");
   const to_format = _M0MPC16option6Option10unwrap__orGsE(_M0MPB3Map3getGssE(values, "--to"), "");
   if (!_M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf210is__format(from_format) || command === "convert" && !_M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf210is__format(to_format)) {
-    return _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS220;
+    return _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS237;
   }
   const _bind$2 = [];
   const parsed = _M0MPB3Map3MapGsmE(new _M0TPB9ArrayViewGUsmEE(_bind$2, 0, 0), undefined);
@@ -4538,19 +4548,19 @@ function _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parse(args) {
   const base = _M0MPB3Map3getGsmE(parsed, "--base");
   if (from_format === "bin") {
     if (base === undefined) {
-      return _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS221;
+      return _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS238;
     }
   }
   const _p$3 = "bin";
   if (!(from_format === _p$3)) {
     if (base === undefined) {
     } else {
-      return _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS222;
+      return _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS239;
     }
   }
   const max_bytes = _M0MPC16option6Option10unwrap__orGsE(_M0MPB3Map3getGsmE(parsed, "--max-bytes"), 16777216n);
   if (BigInt.asUintN(64, max_bytes) === BigInt.asUintN(64, 0n) || BigInt.asUintN(64, max_bytes) > BigInt.asUintN(64, 16777216n)) {
-    return _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS223;
+    return _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS240;
   }
   const payload_size = _M0MPC16option6Option10unwrap__orGsE(_M0MPB3Map3getGsmE(parsed, "--payload-size"), 256n);
   let _tmp$4;
@@ -4569,7 +4579,7 @@ function _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parse(args) {
     _tmp$4 = _tmp$5;
   }
   if (_tmp$4) {
-    return _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS224;
+    return _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS241;
   }
   let _tmp$5;
   if (_M0MPB3Map8containsGssE(values, "--payload-size")) {
@@ -4579,11 +4589,11 @@ function _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parse(args) {
     _tmp$5 = false;
   }
   if (_tmp$5) {
-    return _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS225;
+    return _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS242;
   }
   const fill = _M0MPC16option6Option10unwrap__orGsE(_M0MPB3Map3getGsmE(parsed, "--fill"), 255n);
   if (BigInt.asUintN(64, fill) > BigInt.asUintN(64, 255n)) {
-    return _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS226;
+    return _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS243;
   }
   let _tmp$6;
   if (_M0MPB3Map8containsGssE(values, "--fill")) {
@@ -4593,7 +4603,7 @@ function _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parse(args) {
     _tmp$6 = false;
   }
   if (_tmp$6) {
-    return _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS227;
+    return _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS244;
   }
   return new _M0DTPC16result6ResultGRP418ssjssj183312_2djpg7moonuf23cmd7moonuf26ConfigsE2Ok(new _M0TP418ssjssj183312_2djpg7moonuf23cmd7moonuf26Config(command, _M0MPC15array5Array2atGsE(paths, 0), command === "convert" ? _M0MPC15array5Array2atGsE(paths, 1) : "", from_format, to_format, base, _M0MPC16option6Option3mapGmjE(_M0MPB3Map3getGsmE(parsed, "--family"), (n) => Number(BigInt.asUintN(32, n)) | 0), Number(BigInt.asIntN(32, max_bytes)) | 0, Number(BigInt.asIntN(32, payload_size)) | 0, (Number(BigInt.asIntN(32, fill)) | 0) & 255, discard));
 }
@@ -4625,7 +4635,7 @@ function _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf211load__image(bytes, cfg)
         break _L;
       }
       default: {
-        return _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf211load__imageN6constrS229;
+        return _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf211load__imageN6constrS246;
       }
     }
   }
@@ -4636,7 +4646,7 @@ function _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf211load__image(bytes, cfg)
     if (_ < _bind) {
       const byte = bytes[_];
       if (byte > 127) {
-        return _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf211load__imageN6constrS228;
+        return _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf211load__imageN6constrS245;
       }
       _tmp = _ + 1 | 0;
       continue;
@@ -4697,43 +4707,62 @@ function _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf27summary(image) {
   _M0FPB7printlnGsE(`地址跨度字节数：${_M0MPC16uint646UInt6418to__string_2einner(BigInt.asUintN(64, end - base), 10)}`);
 }
 function _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf219text__output__bound(image, format) {
+  const ranges = [];
+  const _bind = image.segments;
+  const _bind$2 = _bind.length;
+  let _tmp = 0;
+  while (true) {
+    const _ = _tmp;
+    if (_ < _bind$2) {
+      const segment = _bind[_];
+      const _tmp$2 = segment.address;
+      const _p = segment.data.length;
+      const end = BigInt.asUintN(64, _tmp$2 + BigInt.asUintN(64, BigInt(_p)));
+      if (ranges.length > 0 && BigInt.asUintN(64, _M0MPC15array5Array2atGsE(ranges, ranges.length - 1 | 0)._1) === BigInt.asUintN(64, segment.address)) {
+        const start = _M0MPC15array5Array2atGsE(ranges, ranges.length - 1 | 0)._0;
+        _M0MPC15array5Array3setGUmmEE(ranges, ranges.length - 1 | 0, { _0: start, _1: end });
+      } else {
+        _M0MPC15array5Array4pushGsE(ranges, { _0: segment.address, _1: end });
+      }
+      _tmp = _ + 1 | 0;
+      continue;
+    } else {
+      break;
+    }
+  }
   if (format === "hex") {
     let size = 11n;
     let current_upper = 0n;
-    const _bind = image.segments;
-    const _bind$2 = _bind.length;
-    let _tmp = 0;
+    const _bind$3 = ranges.length;
+    let _tmp$2 = 0;
     while (true) {
-      const _ = _tmp;
-      if (_ < _bind$2) {
-        const segment = _bind[_];
-        let offset = 0;
+      const _ = _tmp$2;
+      if (_ < _bind$3) {
+        const _foreach_element = ranges[_];
+        const _start = _foreach_element._0;
+        const _end = _foreach_element._1;
+        let address = _start;
         while (true) {
-          if (offset < segment.data.length) {
-            const _tmp$2 = segment.address;
-            const _p = offset;
-            const address = BigInt.asUintN(64, _tmp$2 + BigInt.asUintN(64, BigInt(_p)));
+          if (BigInt.asUintN(64, address) < BigInt.asUintN(64, _end)) {
             const upper = BigInt.asUintN(64, BigInt.asUintN(64, address) >> BigInt(16 & 63));
             if (BigInt.asUintN(64, upper) !== BigInt.asUintN(64, current_upper)) {
               size = BigInt.asUintN(64, size + 16n);
               current_upper = upper;
             }
-            const boundary = Number(BigInt.asIntN(32, BigInt.asUintN(64, 65536n - BigInt.asUintN(64, address & 65535n)))) | 0;
-            const remaining = segment.data.length - offset | 0;
-            let length = remaining < 16 ? remaining : 16;
-            if (length > boundary) {
+            const boundary = BigInt.asUintN(64, 65536n - BigInt.asUintN(64, address & 65535n));
+            const remaining = BigInt.asUintN(64, _end - address);
+            let length = BigInt.asUintN(64, remaining) < BigInt.asUintN(64, 16n) ? remaining : 16n;
+            if (BigInt.asUintN(64, length) > BigInt.asUintN(64, boundary)) {
               length = boundary;
             }
-            const _tmp$3 = size;
-            const _p$2 = length;
-            size = BigInt.asUintN(64, BigInt.asUintN(64, _tmp$3 + BigInt.asUintN(64, BigInt.asUintN(64, BigInt(_p$2)) * 2n)) + 12n);
-            offset = offset + length | 0;
+            size = BigInt.asUintN(64, BigInt.asUintN(64, size + BigInt.asUintN(64, length * 2n)) + 12n);
+            address = BigInt.asUintN(64, address + length);
             continue;
           } else {
             break;
           }
         }
-        _tmp = _ + 1 | 0;
+        _tmp$2 = _ + 1 | 0;
         continue;
       } else {
         break;
@@ -4744,29 +4773,24 @@ function _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf219text__output__bound(ima
     let highest = 0n;
     let records = 0n;
     let bytes = 0n;
-    const _bind = image.segments;
-    const _bind$2 = _bind.length;
-    let _tmp = 0;
+    const _bind$3 = ranges.length;
+    let _tmp$2 = 0;
     while (true) {
-      const _ = _tmp;
-      if (_ < _bind$2) {
-        const segment = _bind[_];
-        const _tmp$2 = segment.address;
-        const _p = segment.data.length;
-        const end = BigInt.asUintN(64, _tmp$2 + BigInt.asUintN(64, BigInt(_p)));
-        if (BigInt.asUintN(64, end) > BigInt.asUintN(64, 0n) && BigInt.asUintN(64, BigInt.asUintN(64, end - 1n)) > BigInt.asUintN(64, highest)) {
-          highest = BigInt.asUintN(64, end - 1n);
+      const _ = _tmp$2;
+      if (_ < _bind$3) {
+        const _foreach_element = ranges[_];
+        const _start = _foreach_element._0;
+        const _end = _foreach_element._1;
+        if (BigInt.asUintN(64, _end) > BigInt.asUintN(64, 0n) && BigInt.asUintN(64, BigInt.asUintN(64, _end - 1n)) > BigInt.asUintN(64, highest)) {
+          highest = BigInt.asUintN(64, _end - 1n);
         }
         const _tmp$3 = records;
-        const _p$2 = segment.data.length;
         if (32n === 0n) {
           $panic();
         }
-        records = BigInt.asUintN(64, _tmp$3 + BigInt.asUintN(64, BigInt.asUintN(64, BigInt.asUintN(64, BigInt.asUintN(64, BigInt(_p$2)) + 31n)) / BigInt.asUintN(64, 32n)));
-        const _tmp$4 = bytes;
-        const _p$3 = segment.data.length;
-        bytes = BigInt.asUintN(64, _tmp$4 + BigInt.asUintN(64, BigInt(_p$3)));
-        _tmp = _ + 1 | 0;
+        records = BigInt.asUintN(64, _tmp$3 + BigInt.asUintN(64, BigInt.asUintN(64, BigInt.asUintN(64, BigInt.asUintN(64, _end - _start) + 31n)) / BigInt.asUintN(64, 32n)));
+        bytes = BigInt.asUintN(64, BigInt.asUintN(64, bytes + _end) - _start);
+        _tmp$2 = _ + 1 | 0;
         continue;
       } else {
         break;
@@ -4810,7 +4834,7 @@ function _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf213output__bytes(image, cf
         const _tmp$2 = BigInt.asUintN(64, blocks * 512n);
         const _p = cfg.max_bytes;
         if (BigInt.asUintN(64, _tmp$2) > BigInt.asUintN(64, BigInt.asUintN(64, BigInt(_p)))) {
-          return _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf213output__bytesN6constrS231;
+          return _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf213output__bytesN6constrS248;
         }
         return _M0MPC16result6Result8map__errGRP218ssjssj183312_2djpg7moonuf25ImageRP318ssjssj183312_2djpg7moonuf27adapter12AdapterErrorsE(_M0FP218ssjssj183312_2djpg7moonuf214encode_2einner(image, cfg.payload_size), _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf211core__error);
       }
@@ -4819,7 +4843,7 @@ function _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf213output__bytes(image, cf
         if (_bind$4 === undefined) {
         } else {
           if (!cfg.discard_metadata) {
-            return _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf213output__bytesN6constrS232;
+            return _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf213output__bytesN6constrS249;
           }
         }
         return _M0MPC16result6Result8map__errGRP218ssjssj183312_2djpg7moonuf25ImageRP318ssjssj183312_2djpg7moonuf27adapter12AdapterErrorsE(_M0FP218ssjssj183312_2djpg7moonuf215to__bin_2einner(image, cfg.max_bytes, cfg.fill), _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf211core__error);
@@ -4831,14 +4855,14 @@ function _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf213output__bytes(image, cf
         break _L;
       }
       default: {
-        return _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf213output__bytesN6constrS233;
+        return _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf213output__bytesN6constrS250;
       }
     }
   }
   const estimated = _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf219text__output__bound(image, cfg.to_format);
   const _p = cfg.max_bytes;
   if (BigInt.asUintN(64, estimated) > BigInt.asUintN(64, BigInt.asUintN(64, BigInt(_p)))) {
-    return _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf213output__bytesN6constrS230;
+    return _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf213output__bytesN6constrS247;
   }
   const result = cfg.to_format === "hex" ? _M0FP318ssjssj183312_2djpg7moonuf27adapter29image__to__intel__hex_2einner(image, 16, cfg.discard_metadata) : _M0FP318ssjssj183312_2djpg7moonuf27adapter18image__to__srecord(image, undefined, _M0DTPC16option6OptionGOmE4None__, undefined, cfg.discard_metadata);
   return _M0MPC16result6Result8map__errGRP218ssjssj183312_2djpg7moonuf25ImageRP318ssjssj183312_2djpg7moonuf27adapter12AdapterErrorsE(_M0MPC16result6Result3mapGsRP318ssjssj183312_2djpg7moonuf27adapter12AdapterErrorzE(result, _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf211utf8__bytes), (e) => `${_M0MP318ssjssj183312_2djpg7moonuf27adapter12AdapterError4code(e)}: ${_M0MP318ssjssj183312_2djpg7moonuf27adapter12AdapterError7message(e)}`);
@@ -4872,7 +4896,7 @@ function _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf23run(cfg) {
       return new _M0DTPC16result6ResultGusE3Err(_e);
     }
     if (bytes.length > cfg.max_bytes) {
-      return _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf23runN6constrS234;
+      return _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf23runN6constrS251;
     }
     const error = _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf211write__file(cfg.output, bytes);
     const _p$3 = "";
