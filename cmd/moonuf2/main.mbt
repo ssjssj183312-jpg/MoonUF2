@@ -294,28 +294,37 @@ fn summary(image : @uf2.Image) -> Unit {
 }
 
 ///|
-/// 估算记录校验和、地址记录和换行符的长度，不执行数据编码。
+/// 按导出器合并相邻段后的布局计算文本长度，不复制有效载荷或执行编码。
 fn text_output_bound(image : @uf2.Image, format : String) -> UInt64 {
+  let ranges : Array[(UInt64, UInt64)] = []
+  for segment in image.segments {
+    let end = segment.address + segment.data.length().to_uint64()
+    if ranges.length() > 0 && ranges[ranges.length() - 1].1 == segment.address {
+      let start = ranges[ranges.length() - 1].0
+      ranges[ranges.length() - 1] = (start, end)
+    } else {
+      ranges.push((segment.address, end))
+    }
+  }
   if format == "hex" {
     let mut size = 11UL // 文件结束记录，不含末尾换行符
     let mut current_upper = 0UL
-    for segment in image.segments {
-      let mut offset = 0
-      while offset < segment.data.length() {
-        let address = segment.address + offset.to_uint64()
+    for (start, end) in ranges {
+      let mut address = start
+      while address < end {
         let upper = address >> 16
         if upper != current_upper {
           size = size + 16UL
           current_upper = upper
         }
-        let boundary = (0x10000UL - (address & 0xffffUL)).to_int()
-        let remaining = segment.data.length() - offset
-        let mut length = if remaining < 16 { remaining } else { 16 }
+        let boundary = 0x10000UL - (address & 0xffffUL)
+        let remaining = end - address
+        let mut length = if remaining < 16UL { remaining } else { 16UL }
         if length > boundary {
           length = boundary
         }
-        size = size + length.to_uint64() * 2UL + 12UL
-        offset = offset + length
+        size = size + length * 2UL + 12UL
+        address = address + length
       }
     }
     size
@@ -323,13 +332,12 @@ fn text_output_bound(image : @uf2.Image, format : String) -> UInt64 {
     let mut highest = 0UL
     let mut records = 0UL
     let mut bytes = 0UL
-    for segment in image.segments {
-      let end = segment.address + segment.data.length().to_uint64()
+    for (start, end) in ranges {
       if end > 0UL && end - 1UL > highest {
         highest = end - 1UL
       }
-      records = records + (segment.data.length().to_uint64() + 31UL) / 32UL
-      bytes = bytes + segment.data.length().to_uint64()
+      records = records + (end - start + 31UL) / 32UL
+      bytes = bytes + end - start
     }
     let width = if highest <= 0xffffUL {
       2UL
@@ -376,8 +384,7 @@ fn output_bytes(image : @uf2.Image, cfg : Config) -> Result[Bytes, String] {
       )
     }
     "hex" | "srec" => {
-      // 根据记录宽度与地址字段限制文本分配大小。
-      // 上游可能合并相邻数据段，此操作只会减小输出长度。
+      // 按上游合并相邻段后的记录宽度与地址字段限制文本分配大小。
       let estimated = text_output_bound(image, cfg.to_format)
       if estimated > cfg.max_bytes.to_uint64() {
         return Err(
