@@ -200,6 +200,18 @@ def main() -> None:
         cli("verify", "bad.hex", "--from", "hex", ok=False, contains="checksum.mismatch")
         (work / "unicode.hex").write_text("你好", encoding="utf-8")
         cli("verify", "unicode.hex", "--from", "hex", ok=False, contains="text.ascii")
+        # 代理码元不得被文本分行丢弃后变成合法记录；CLI 仍在原始字节层拒绝。
+        for format, text in [
+            ("hex", ":04000000😺01020304F2\n:00000001FF\n"),
+            ("srec", "S1070000😺01020304EE\nS5030001FB\nS9030000FC\n"),
+        ]:
+            malformed = f"unicode-record.{format}"
+            (work / malformed).write_text(text, encoding="utf-8")
+            cli("verify", malformed, "--from", format, "--discard-metadata", ok=False, contains="text.ascii")
+            output = f"unicode-record-{format}.uf2"
+            cli("convert", malformed, output, "--from", format, "--to", "uf2", "--discard-metadata", ok=False, contains="text.ascii")
+            assert not (work / output).exists()
+            assert not list(work.glob(".moonuf2-*")), "非 ASCII 拒绝后残留临时输出"
         (work / "overlong.hex").write_text(":" + "0" * 522, encoding="ascii")
         cli("verify", "overlong.hex", "--from", "hex", ok=False, contains="record.too_long")
         with (work / "oversized.uf2").open("wb") as oversized:
