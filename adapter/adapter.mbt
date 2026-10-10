@@ -110,6 +110,18 @@ fn check_text_budget(text : String) -> Result[Unit, AdapterError] {
       line_length = 0
     } else {
       was_cr = false
+      // 上游按 UTF-16 码元分行时会丢弃代理码元；先拒绝非 ASCII，防止修复坏输入。
+      if code > 127 {
+        return Err(
+          Firmware(
+            @firmware.FirmwareError::new(
+              @firmware.HexInvalidDigit,
+              "HEX/S-record input must contain ASCII characters only",
+              @firmware.SourcePosition::column(line_index, line_length),
+            ),
+          ),
+        )
+      }
       line_length = line_length + 1
       if line_length > 521 {
         return Err(

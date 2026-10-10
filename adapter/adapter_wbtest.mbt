@@ -369,6 +369,60 @@ test "预检查限制超长行并保留 CRLF 文本的源文件行号" {
 }
 
 ///|
+test "公开 HEX 导入拒绝记录中插入的非 ASCII 补充平面字符" {
+  let hex = ":04000000😺01020304F2\n:00000001FF\n"
+  assert_true(intel_hex_to_image(hex) is Err(_))
+  for newline in ["\n", "\r", "\r\n"] {
+    let data_record = ":0400000001020304F2" + newline
+    let valid = intel_hex_to_image(data_record + ":00000001FF" + newline).unwrap()
+    assert_eq(@uf2.to_bin(valid).unwrap(), b"\x01\x02\x03\x04")
+    for symbol in ["é", "汉", "😺"] {
+      let text = data_record + ":0000" + symbol + "0001FF" + newline
+      match intel_hex_to_image(text) {
+        Err(Firmware(error)) => {
+          assert_eq(error.code(), "hex.invalid_digit")
+          assert_eq(error.line_index(), 1)
+          assert_eq(error.position().column_index(), Some(5))
+        }
+        _ =>
+          fail(
+            "公开 HEX 接口必须拒绝非 ASCII 并保留源文件位置",
+          )
+      }
+    }
+  }
+}
+
+///|
+test "公开 S-record 导入拒绝记录中插入的非 ASCII 补充平面字符" {
+  let srec = "S1070000😺01020304EE\nS5030001FB\nS9030000FC\n"
+  assert_true(srecord_to_image(srec, discard_metadata=true) is Err(_))
+  for newline in ["\n", "\r", "\r\n"] {
+    let data_record = "S107000001020304EE" + newline
+    let terminator = "S9030000FC" + newline
+    let valid = srecord_to_image(
+      data_record + "S5030001FB" + newline + terminator,
+      discard_metadata=true,
+    ).unwrap()
+    assert_eq(@uf2.to_bin(valid).unwrap(), b"\x01\x02\x03\x04")
+    for symbol in ["é", "汉", "😺"] {
+      let text = data_record + "S503" + symbol + "0001FB" + newline + terminator
+      match srecord_to_image(text, discard_metadata=true) {
+        Err(Firmware(error)) => {
+          assert_eq(error.code(), "hex.invalid_digit")
+          assert_eq(error.line_index(), 1)
+          assert_eq(error.position().column_index(), Some(4))
+        }
+        _ =>
+          fail(
+            "公开 S-record 接口必须拒绝非 ASCII 并保留源文件位置",
+          )
+      }
+    }
+  }
+}
+
+///|
 test "上游错误的中文概括保留结构化原文错误码和源文件行号" {
   let cases : Array[(@firmware.FirmwareErrorCode, String)] = [
     (@firmware.HexOddLength, "十六进制字符数量必须为偶数"),
