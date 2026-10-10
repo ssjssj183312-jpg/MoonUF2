@@ -4065,6 +4065,9 @@ function _M0FP318ssjssj183312_2djpg7moonuf27adapter19check__text__budget(text) {
         line_length = 0;
       } else {
         was_cr = false;
+        if (code > 127) {
+          return new _M0DTPC16result6ResultGuRP318ssjssj183312_2djpg7moonuf27adapter12AdapterErrorE3Err(new _M0DTP318ssjssj183312_2djpg7moonuf27adapter12AdapterError8Firmware(_M0MP418ssjssj183312_2djpg7moonuf26vendor8firmware13FirmwareError3new(1, "HEX/S-record input must contain ASCII characters only", _M0MP418ssjssj183312_2djpg7moonuf26vendor8firmware14SourcePosition6column(line_index, line_length))));
+        }
         line_length = line_length + 1 | 0;
         if (line_length > 521) {
           return new _M0DTPC16result6ResultGuRP318ssjssj183312_2djpg7moonuf27adapter12AdapterErrorE3Err(new _M0DTP318ssjssj183312_2djpg7moonuf27adapter12AdapterError8Firmware(_M0MP418ssjssj183312_2djpg7moonuf26vendor8firmware13FirmwareError3new(6, "固件文本单行长度超出记录允许的 521 字符上限", _M0MP418ssjssj183312_2djpg7moonuf26vendor8firmware14SourcePosition4line(line_index))));
