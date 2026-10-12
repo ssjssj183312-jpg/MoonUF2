@@ -22,9 +22,10 @@ CLI = ROOT / "_build/js/debug/build/cmd/moonuf2/moonuf2.js"
 checks = 0
 
 
-def run(*args: str, ok: bool = True, contains: str = "", cwd: Path) -> subprocess.CompletedProcess:
+def run(*args: str, ok: bool = True, contains: str = "", cwd: Path,
+        node_args: tuple[str, ...] = ()) -> subprocess.CompletedProcess:
     global checks
-    process = subprocess.run([NODE, str(CLI), *map(str, args)], cwd=cwd,
+    process = subprocess.run([NODE, *node_args, str(CLI), *map(str, args)], cwd=cwd,
                              text=True, encoding="utf-8", capture_output=True, timeout=20)
     assert (process.returncode == 0) == ok, (args, process.returncode, process.stdout, process.stderr)
     if contains:
@@ -97,6 +98,38 @@ def main() -> None:
         (work / "unaligned.bin").write_bytes(b"123")
         cli("convert", "unaligned.bin", "unaligned.uf2", "--from", "bin", "--to", "uf2", "--base", "0", ok=False, contains="uf2.alignment")
         (work / "tiny.bin").write_bytes(b"1234")
+        # 受控关闭故障：关闭实际输入描述符后抛 EIO，不依赖真实磁盘故障。
+        (work / "close-error.bin").write_bytes(b"1234")
+        close_hook = work / "close-failure.cjs"
+        close_hook.write_text("""const fs = require('node:fs');
+const realOpen = fs.openSync;
+const realClose = fs.closeSync;
+let inputFd;
+fs.openSync = function(path, ...args) {
+  const fd = realOpen.call(this, path, ...args);
+  if (String(path).endsWith('close-error.bin')) inputFd = fd;
+  return fd;
+};
+fs.closeSync = function(fd) {
+  realClose.call(this, fd);
+  if (fd === inputFd) {
+    inputFd = undefined;
+    const error = new Error('Controlled input close failure');
+    error.code = 'EIO';
+    throw error;
+  }
+};
+""", encoding="ascii")
+        node_args = ("--require", str(close_hook))
+        cli("verify", "close-error.bin", "--from", "bin", "--base", "0",
+            node_args=node_args, ok=False, contains="io.read: 关闭输入文件失败（EIO）")
+        cli("convert", "close-error.bin", "close-error.uf2", "--from", "bin", "--to", "uf2", "--base", "0",
+            node_args=node_args, ok=False, contains="io.read: 关闭输入文件失败（EIO）")
+        assert not (work / "close-error.uf2").exists()
+        assert not list(work.glob(".moonuf2-*")), "关闭输入失败后残留临时输出"
+        # 已拒绝的输入继续报告原错误，关闭故障不能掩盖大小限制。
+        cli("verify", "close-error.bin", "--from", "bin", "--base", "0", "--max-bytes", "3",
+            node_args=node_args, ok=False, contains="io.input_limit")
         # 80 个汉字加扩展名为 244 个 UTF-8 字节，仍是常见文件系统的合法名称。
         # 临时文件名不能再拼接完整输出名，否则会先触发 ENAMETOOLONG。
         long_name = "固件" * 40 + ".uf2"
