@@ -369,6 +369,82 @@ test "预检查限制超长行并保留 CRLF 文本的源文件行号" {
 }
 
 ///|
+test "type 02 数据记录跨越段偏移边界必须拒绝" {
+  let text = ":020000021000EC\n:08FFFC000102030405060708D9\n:00000001FF\n"
+  assert_true(intel_hex_to_image(text) is Err(_))
+  for newline in ["\n", "\r", "\r\n"] {
+    let cases : Array[(String, Int)] = [
+      (":020000021000EC" + newline, 2),
+      (":020000020000FC" + newline, 2),
+      (":020000040001F9" + newline + ":020000021000EC" + newline, 3),
+      (":020000021000EC" + newline + ":0400000300000000F9" + newline, 3),
+      (":020000021000EC" + newline + ":0400000500000000F7" + newline, 3),
+    ]
+    for (prefix, source_line) in cases {
+      let input = prefix +
+        ":08FFFC000102030405060708D9" +
+        newline +
+        ":00000001FF"
+      match intel_hex_to_image(input, discard_metadata=true) {
+        Err(error) => {
+          assert_eq(error.code(), "adapter.invalid_image")
+          assert_true(error.message().has_prefix("Intel HEX type 02"))
+          assert_true(
+            error
+            .message()
+            .has_suffix("源文件第 " + source_line.to_string() + " 行）"),
+          )
+        }
+        Ok(_) => fail("分段回绕记录不能作为连续地址接受")
+      }
+    }
+  }
+  let bad_checksum = ":020000021000EC\n:08FFFC000102030405060708D8\n:00000001FF"
+  match intel_hex_to_image(bad_checksum) {
+    Err(error) => assert_eq(error.code(), "checksum.mismatch")
+    Ok(_) => fail("必须先验证上游记录的校验和")
+  }
+}
+
+///|
+test "type 02 恰好到段边界及显式拆分记录保留真实地址" {
+  for
+    (metadata, base) in [
+      (":020000021000EC", 0x10000UL),
+      (":020000020000FC", 0UL),
+    ] {
+    let exact = intel_hex_to_image(
+      metadata + "\n:04FFFC0001020304F7\n:00000001FF",
+    ).unwrap()
+    assert_eq(exact.segments.length(), 1)
+    assert_eq(exact.segments[0].address, base + 0xfffcUL)
+    assert_eq(exact.segments[0].data, b"\x01\x02\x03\x04")
+    let split = intel_hex_to_image(
+      metadata + "\n:04FFFC0001020304F7\n:0400000005060708E2\n:00000001FF",
+    ).unwrap()
+    assert_eq(split.segments.length(), 2)
+    assert_eq(split.segments[0].address, base)
+    assert_eq(split.segments[0].data, b"\x05\x06\x07\x08")
+    assert_eq(split.segments[1].address, base + 0xfffcUL)
+    assert_eq(split.segments[1].data, b"\x01\x02\x03\x04")
+    assert_eq(@uf2.decode(@uf2.encode(split).unwrap()).unwrap(), split)
+  }
+}
+
+///|
+test "type 04 线性跨界和从 type 02 切换后仍按连续地址解析" {
+  for prefix in ["", ":020000020000FC\n", ":020000021000EC\n"] {
+    let input = prefix +
+      ":020000040001F9\n:08FFFC000102030405060708D9\n:00000001FF"
+    let image = intel_hex_to_image(input).unwrap()
+    assert_eq(image.segments.length(), 1)
+    assert_eq(image.segments[0].address, 0x1fffcUL)
+    assert_eq(image.segments[0].data, b"\x01\x02\x03\x04\x05\x06\x07\x08")
+    assert_eq(@uf2.decode(@uf2.encode(image).unwrap()).unwrap(), image)
+  }
+}
+
+///|
 test "公开 HEX 导入拒绝记录中插入的非 ASCII 补充平面字符" {
   let hex = ":04000000😺01020304F2\n:00000001FF\n"
   assert_true(intel_hex_to_image(hex) is Err(_))

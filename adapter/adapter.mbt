@@ -260,6 +260,25 @@ pub fn intel_hex_to_image(
     Err(error) => return Err(Firmware(error))
     Ok(document) => document
   }
+  // 固定上游将数据记录视为连续地址；type 02 的 16 位偏移回绕不能如此解释。
+  let mut segmented = false
+  for record in document.records() {
+    match record.record_type() {
+      @firmware.IntelExtendedSegmentAddress => segmented = true
+      @firmware.IntelExtendedLinearAddress => segmented = false
+      @firmware.IntelData =>
+        if segmented && record.address() + record.byte_count() > 65536 {
+          return Err(
+            InvalidImage(
+              "Intel HEX type 02 数据记录跨越 64 KiB 段偏移边界；请拆分记录，并让跨界部分从偏移 0 继续（源文件第 " +
+              (record.line_index() + 1).to_string() +
+              " 行）",
+            ),
+          )
+        }
+      _ => ()
+    }
+  }
   let image = match
     normalize_chunks(document.data_chunks(), document.entry_point()) {
     Err(error) => return Err(error)
