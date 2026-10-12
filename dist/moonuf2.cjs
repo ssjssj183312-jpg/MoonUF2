@@ -422,12 +422,13 @@ const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf211ascii__text = (bytes) => B
 const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf211utf8__bytes = (text) => Buffer.from(text, 'utf8');
 const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf210read__file = (path, limit) => {
    const fs = require('node:fs');
+   const result = { error: '' };
    let fd;
    try {
      fd = fs.openSync(path, fs.constants.O_RDONLY | fs.constants.O_NONBLOCK);
      const stat = fs.fstatSync(fd);
-     if (!stat.isFile()) return { error: 'io.input_type: 输入必须是普通文件' };
-     if (stat.size > limit) return { error: 'io.input_limit: 输入超过 --max-bytes 限制' };
+     if (!stat.isFile()) return Object.assign(result, { error: 'io.input_type: 输入必须是普通文件' });
+     if (stat.size > limit) return Object.assign(result, { error: 'io.input_limit: 输入超过 --max-bytes 限制' });
      const buffer = Buffer.alloc(stat.size + 1);
      let size = 0;
      while (size < buffer.length) {
@@ -435,8 +436,8 @@ const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf210read__file = (path, limit)
        if (n === 0) break;
        size += n;
      }
-     if (size !== stat.size) return { error: 'io.input_changed: 读取时输入大小发生变化，请重试' };
-     return { bytes: buffer.subarray(0, size), error: '' };
+     if (size !== stat.size) return Object.assign(result, { error: 'io.input_changed: 读取时输入大小发生变化，请重试' });
+     return Object.assign(result, { bytes: buffer.subarray(0, size), error: '' });
    } catch (e) {
      const code = e && typeof e.code === 'string' ? e.code : 'UNKNOWN';
      const reason = ({
@@ -445,9 +446,20 @@ const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf210read__file = (path, limit)
        EMFILE: '进程打开的文件过多', ENFILE: '系统打开的文件过多',
        ENAMETOOLONG: '文件路径过长', EIO: '输入输出错误', EBADF: '文件描述符无效'
      })[code] || '系统读取失败';
-     return { error: 'io.read: 读取文件失败：' + reason + '（' + code + '）' };
+     return Object.assign(result, { error: 'io.read: 读取文件失败：' + reason + '（' + code + '）' });
    }
-   finally { if (fd !== undefined) fs.closeSync(fd); }
+   finally {
+     if (fd !== undefined) {
+       try { fs.closeSync(fd); }
+       catch (e) {
+         if (!result.error) {
+           const code = e && typeof e.code === 'string' ? e.code : 'UNKNOWN';
+           result.error = 'io.read: 关闭输入文件失败（' + code + '）';
+           delete result.bytes;
+         }
+       }
+     }
+   }
  };
 const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf211write__file = (path, bytes) => {
    const fs = require('node:fs');
