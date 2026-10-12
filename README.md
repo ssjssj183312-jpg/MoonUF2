@@ -51,6 +51,10 @@ sh scripts/moonuf2 convert app.srec from-srec.uf2 --from srec --to uf2 --discard
 
 输入格式必须显式选择，不按扩展名猜测。输出文件必须不存在；拒绝覆盖已有文件。参数错误/格式失败返回非零退出码。`inspect` 和 `verify` 默认输入 UF2。非 UF2 可加 `--from`；BIN 输入另需 `--base`。文本的只读 `inspect`/`verify` 也使用严格适配器，入口点/header 会要求 `--discard-metadata`。
 
+输入文件的读取和关闭失败使用 `io.read` 中文诊断。若已经检测到输入类型、大小
+或读取期间变化错误，关闭失败会保留原来的错误。输入关闭失败时不发布转换结果；
+相关受控故障注入回归见 [验证记录](docs/validation.md)。
+
 ## 明确的范围和限制
 
 1. 仅支持 flags=0 或 0x2000（family ID）。not-main-flash、file container、MD5、extension tags、未知位一律返回明确错误，不静默略过。多 family 拼接也拒绝；这是严格子集工具，不是所有 UF2 的完整实现。
