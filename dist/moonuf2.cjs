@@ -482,8 +482,8 @@ const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf215set__exit__code = (code) =
 const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf26stderr = (message) => { process.stderr.write(message + '\n'); };
 const _M0FP092moonbitlang_2fcore_2fbuiltin_2fStringBuilder_24as_24_40moonbitlang_2fcore_2fbuiltin_2eLogger = { method_0: _M0IPB13StringBuilderPB6Logger13write__string, method_1: _M0IP016_24default__implPB6Logger16write__substringGRPB13StringBuilderE, method_2: _M0IPB13StringBuilderPB6Logger11write__view, method_3: _M0IPB13StringBuilderPB6Logger11write__char, method_4: _M0IP016_24default__implPB6Logger28write__string__interpolationGRPB13StringBuilderE, method_5: _M0IP016_24default__implPB6Logger5writeGRPB13StringBuilderE };
 const _M0FP418ssjssj183312_2djpg7moonuf26vendor8firmware14hex__characterN6digitsS118 = "0123456789ABCDEF";
-const _M0FP318ssjssj183312_2djpg7moonuf27adapter19check__byte__budgetN6constrS421 = new _M0DTP318ssjssj183312_2djpg7moonuf27adapter12AdapterError13ResourceLimit("镜像的实际数据量超出适配层的 16 MiB 上限");
-const _M0FP318ssjssj183312_2djpg7moonuf27adapter19check__byte__budgetN6constrS422 = new _M0DTPC16result6ResultGiRP318ssjssj183312_2djpg7moonuf27adapter12AdapterErrorE3Err(_M0FP318ssjssj183312_2djpg7moonuf27adapter19check__byte__budgetN6constrS421);
+const _M0FP318ssjssj183312_2djpg7moonuf27adapter19check__byte__budgetN6constrS434 = new _M0DTP318ssjssj183312_2djpg7moonuf27adapter12AdapterError13ResourceLimit("镜像的实际数据量超出适配层的 16 MiB 上限");
+const _M0FP318ssjssj183312_2djpg7moonuf27adapter19check__byte__budgetN6constrS435 = new _M0DTPC16result6ResultGiRP318ssjssj183312_2djpg7moonuf27adapter12AdapterErrorE3Err(_M0FP318ssjssj183312_2djpg7moonuf27adapter19check__byte__budgetN6constrS434);
 const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25usageN4helpS98 = "MoonUF2 0.1.0：严格校验、检查和转换固件文件（不会烧录设备）\n\n用法：\n  moonuf2 inspect 输入文件 [--from uf2|bin|hex|srec] [选项]\n  moonuf2 verify 输入文件 [--from uf2|bin|hex|srec] [选项]\n  moonuf2 convert 输入文件 输出文件 --from 格式 --to 格式 [选项]\n\n选项：\n  --base 数值           BIN 输入的必填起始地址（十进制或 0x 十六进制）\n  --family 数值         UF2 输入的预期芯片家族标识；其他输入设置该标识\n  --max-bytes 数值      输入/输出上限，默认 16777216（16 MiB），最高 16 MiB\n  --payload-size 数值   UF2 输出块有效载荷，默认 256；4..476，且为 4 的倍数\n  --fill 数值           BIN 输出空洞填充值，默认 255；0..255\n  --discard-metadata    明确允许丢弃入口地址、头信息、芯片家族标识等不可表示元数据\n  --                    结束选项解析（用于以 - 开头的文件名）\n  --help                显示帮助\n  --version             显示版本\n\n转换必须显式指定 --from 和 --to；不按文件扩展名猜测。\n输出文件必须不存在；已有文件不会覆盖。HEX/S-record 使用 MoonBit 上游库。\nBIN 输出从最低地址开始，空洞填充；请保留输出中报告的起始地址。\n严格 UF2 仅支持普通主闪存数据与可选芯片家族标识；地址和长度须 4 字节对齐。\n当前 HEX/S-record 检查也使用严格图像适配器；入口点/头信息需 --discard-metadata。\n校验仅检查文件结构，不保证设备兼容性、固件真实性或可安全烧录。\n\n示例：\n  moonuf2 convert app.bin app.uf2 --from bin --to uf2 --base 0x10000000 --family 0xe48bff56\n  moonuf2 verify app.uf2 --family 0xe48bff56\n  moonuf2 convert app.uf2 restored.bin --from uf2 --to bin --discard-metadata";
 const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf26numberN7_2abindS101 = "0x";
 const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf26numberN7_2abindS102 = "0X";
@@ -501,8 +501,8 @@ const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS241 = new _M0
 const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS242 = new _M0DTPC16result6ResultGRP418ssjssj183312_2djpg7moonuf23cmd7moonuf26ConfigsE3Err("cli.payload: --payload-size 仅适用于 UF2 输出");
 const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS243 = new _M0DTPC16result6ResultGRP418ssjssj183312_2djpg7moonuf23cmd7moonuf26ConfigsE3Err("cli.fill: --fill 必须在 0..255 范围内");
 const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf25parseN6constrS244 = new _M0DTPC16result6ResultGRP418ssjssj183312_2djpg7moonuf23cmd7moonuf26ConfigsE3Err("cli.fill: --fill 仅适用于 BIN 输出");
-const _M0FP318ssjssj183312_2djpg7moonuf27adapter12check__rangeN6constrS419 = new _M0DTP318ssjssj183312_2djpg7moonuf27adapter12AdapterError12InvalidImage("数据范围超出 32 位 UF2 地址空间");
-const _M0FP318ssjssj183312_2djpg7moonuf27adapter12check__rangeN6constrS420 = new _M0DTPC16result6ResultGuRP318ssjssj183312_2djpg7moonuf27adapter12AdapterErrorE3Err(_M0FP318ssjssj183312_2djpg7moonuf27adapter12check__rangeN6constrS419);
+const _M0FP318ssjssj183312_2djpg7moonuf27adapter12check__rangeN6constrS432 = new _M0DTP318ssjssj183312_2djpg7moonuf27adapter12AdapterError12InvalidImage("数据范围超出 32 位 UF2 地址空间");
+const _M0FP318ssjssj183312_2djpg7moonuf27adapter12check__rangeN6constrS433 = new _M0DTPC16result6ResultGuRP318ssjssj183312_2djpg7moonuf27adapter12AdapterErrorE3Err(_M0FP318ssjssj183312_2djpg7moonuf27adapter12check__rangeN6constrS432);
 const _M0FP418ssjssj183312_2djpg7moonuf26vendor8firmware30validate__intel__record__shapeN6constrS895 = 0;
 const _M0FP418ssjssj183312_2djpg7moonuf26vendor8firmware30validate__intel__record__shapeN6constrS896 = 2;
 const _M0FP418ssjssj183312_2djpg7moonuf26vendor8firmware30validate__intel__record__shapeN6constrS897 = 4;
@@ -518,10 +518,10 @@ const _M0FP418ssjssj183312_2djpg7moonuf26vendor8firmware19intel__record__typeN6c
 const _M0FP418ssjssj183312_2djpg7moonuf26vendor8firmware19intel__record__typeN6constrS894 = 7;
 const _M0FP418ssjssj183312_2djpg7moonuf26vendor8firmware33parse__intel__hex__record_2einnerN6constrS901 = 0;
 const _M0FP418ssjssj183312_2djpg7moonuf26vendor8firmware33parse__intel__hex__record_2einnerN6constrS902 = 1;
-const _M0FP318ssjssj183312_2djpg7moonuf27adapter29from__firmware__image_2einnerN6constrS425 = new _M0DTP318ssjssj183312_2djpg7moonuf27adapter12AdapterError12MetadataLoss("UF2 无法保留固件入口地址；如需继续，请显式启用 discard_metadata");
-const _M0FP318ssjssj183312_2djpg7moonuf27adapter29from__firmware__image_2einnerN6constrS426 = new _M0DTPC16result6ResultGRP218ssjssj183312_2djpg7moonuf25ImageRP318ssjssj183312_2djpg7moonuf27adapter12AdapterErrorE3Err(_M0FP318ssjssj183312_2djpg7moonuf27adapter29from__firmware__image_2einnerN6constrS425);
-const _M0FP318ssjssj183312_2djpg7moonuf27adapter19check__text__budgetN6constrS423 = new _M0DTP318ssjssj183312_2djpg7moonuf27adapter12AdapterError13ResourceLimit("固件文本超出适配层的 16 MiB 输入上限");
-const _M0FP318ssjssj183312_2djpg7moonuf27adapter19check__text__budgetN6constrS424 = new _M0DTPC16result6ResultGuRP318ssjssj183312_2djpg7moonuf27adapter12AdapterErrorE3Err(_M0FP318ssjssj183312_2djpg7moonuf27adapter19check__text__budgetN6constrS423);
+const _M0FP318ssjssj183312_2djpg7moonuf27adapter29from__firmware__image_2einnerN6constrS438 = new _M0DTP318ssjssj183312_2djpg7moonuf27adapter12AdapterError12MetadataLoss("UF2 无法保留固件入口地址；如需继续，请显式启用 discard_metadata");
+const _M0FP318ssjssj183312_2djpg7moonuf27adapter29from__firmware__image_2einnerN6constrS439 = new _M0DTPC16result6ResultGRP218ssjssj183312_2djpg7moonuf25ImageRP318ssjssj183312_2djpg7moonuf27adapter12AdapterErrorE3Err(_M0FP318ssjssj183312_2djpg7moonuf27adapter29from__firmware__image_2einnerN6constrS438);
+const _M0FP318ssjssj183312_2djpg7moonuf27adapter19check__text__budgetN6constrS436 = new _M0DTP318ssjssj183312_2djpg7moonuf27adapter12AdapterError13ResourceLimit("固件文本超出适配层的 16 MiB 输入上限");
+const _M0FP318ssjssj183312_2djpg7moonuf27adapter19check__text__budgetN6constrS437 = new _M0DTPC16result6ResultGuRP318ssjssj183312_2djpg7moonuf27adapter12AdapterErrorE3Err(_M0FP318ssjssj183312_2djpg7moonuf27adapter19check__text__budgetN6constrS436);
 const _M0FP418ssjssj183312_2djpg7moonuf26vendor8firmware13srecord__typeN6constrS875 = new _M0DTPC16result6ResultGRP418ssjssj183312_2djpg7moonuf26vendor8firmware11SRecordTypeRP418ssjssj183312_2djpg7moonuf26vendor8firmware13FirmwareErrorE2Ok(0);
 const _M0FP418ssjssj183312_2djpg7moonuf26vendor8firmware13srecord__typeN6constrS876 = new _M0DTPC16result6ResultGRP418ssjssj183312_2djpg7moonuf26vendor8firmware11SRecordTypeRP418ssjssj183312_2djpg7moonuf26vendor8firmware13FirmwareErrorE2Ok(1);
 const _M0FP418ssjssj183312_2djpg7moonuf26vendor8firmware13srecord__typeN6constrS877 = new _M0DTPC16result6ResultGRP418ssjssj183312_2djpg7moonuf26vendor8firmware11SRecordTypeRP418ssjssj183312_2djpg7moonuf26vendor8firmware13FirmwareErrorE2Ok(2);
@@ -535,16 +535,16 @@ const _M0FP418ssjssj183312_2djpg7moonuf26vendor8firmware13srecord__typeN6constrS
 const _M0FP418ssjssj183312_2djpg7moonuf26vendor8firmware22parse__srecord_2einnerN6constrS885 = 0;
 const _M0FP418ssjssj183312_2djpg7moonuf26vendor8firmware22parse__srecord_2einnerN6constrS886 = 2;
 const _M0FP418ssjssj183312_2djpg7moonuf26vendor8firmware24parse__srecord__documentN6constrS887 = 0n;
-const _M0FP318ssjssj183312_2djpg7moonuf27adapter26srecord__to__image_2einnerN6constrS433 = new _M0DTP318ssjssj183312_2djpg7moonuf27adapter12AdapterError12MetadataLoss("UF2 无法保留 S-record 头记录或入口地址；如需继续，请显式启用 discard_metadata");
-const _M0FP318ssjssj183312_2djpg7moonuf27adapter26srecord__to__image_2einnerN6constrS434 = new _M0DTPC16result6ResultGRP218ssjssj183312_2djpg7moonuf25ImageRP318ssjssj183312_2djpg7moonuf27adapter12AdapterErrorE3Err(_M0FP318ssjssj183312_2djpg7moonuf27adapter26srecord__to__image_2einnerN6constrS433);
+const _M0FP318ssjssj183312_2djpg7moonuf27adapter26srecord__to__image_2einnerN6constrS446 = new _M0DTP318ssjssj183312_2djpg7moonuf27adapter12AdapterError12MetadataLoss("UF2 无法保留 S-record 头记录或入口地址；如需继续，请显式启用 discard_metadata");
+const _M0FP318ssjssj183312_2djpg7moonuf27adapter26srecord__to__image_2einnerN6constrS447 = new _M0DTPC16result6ResultGRP218ssjssj183312_2djpg7moonuf25ImageRP318ssjssj183312_2djpg7moonuf27adapter12AdapterErrorE3Err(_M0FP318ssjssj183312_2djpg7moonuf27adapter26srecord__to__image_2einnerN6constrS446);
 const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf211load__imageN6constrS245 = new _M0DTPC16result6ResultGRP218ssjssj183312_2djpg7moonuf25ImagesE3Err("text.ascii: HEX/S-record 输入必须是 ASCII 文本");
 const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf211load__imageN6constrS246 = new _M0DTPC16result6ResultGRP218ssjssj183312_2djpg7moonuf25ImagesE3Err("cli.format: 不支持的输入格式");
-const _M0FP318ssjssj183312_2djpg7moonuf27adapter27to__firmware__image_2einnerN6constrS427 = new _M0DTP318ssjssj183312_2djpg7moonuf27adapter12AdapterError12MetadataLoss("Intel HEX 和 S-record 无法保留 UF2 芯片家族 ID；如需继续，请显式启用 discard_metadata");
-const _M0FP318ssjssj183312_2djpg7moonuf27adapter27to__firmware__image_2einnerN6constrS428 = new _M0DTPC16result6ResultGRP418ssjssj183312_2djpg7moonuf26vendor8firmware13FirmwareImageRP318ssjssj183312_2djpg7moonuf27adapter12AdapterErrorE3Err(_M0FP318ssjssj183312_2djpg7moonuf27adapter27to__firmware__image_2einnerN6constrS427);
-const _M0FP318ssjssj183312_2djpg7moonuf27adapter27to__firmware__image_2einnerN6constrS429 = new _M0DTP318ssjssj183312_2djpg7moonuf27adapter12AdapterError12InvalidImage("入口地址超出 32 位地址空间");
-const _M0FP318ssjssj183312_2djpg7moonuf27adapter27to__firmware__image_2einnerN6constrS430 = new _M0DTPC16result6ResultGRP418ssjssj183312_2djpg7moonuf26vendor8firmware13FirmwareImageRP318ssjssj183312_2djpg7moonuf27adapter12AdapterErrorE3Err(_M0FP318ssjssj183312_2djpg7moonuf27adapter27to__firmware__image_2einnerN6constrS429);
-const _M0FP318ssjssj183312_2djpg7moonuf27adapter27to__firmware__image_2einnerN6constrS431 = new _M0DTP318ssjssj183312_2djpg7moonuf27adapter12AdapterError12InvalidImage("镜像包含空数据段");
-const _M0FP318ssjssj183312_2djpg7moonuf27adapter27to__firmware__image_2einnerN6constrS432 = new _M0DTPC16result6ResultGRP418ssjssj183312_2djpg7moonuf26vendor8firmware13FirmwareImageRP318ssjssj183312_2djpg7moonuf27adapter12AdapterErrorE3Err(_M0FP318ssjssj183312_2djpg7moonuf27adapter27to__firmware__image_2einnerN6constrS431);
+const _M0FP318ssjssj183312_2djpg7moonuf27adapter27to__firmware__image_2einnerN6constrS440 = new _M0DTP318ssjssj183312_2djpg7moonuf27adapter12AdapterError12MetadataLoss("Intel HEX 和 S-record 无法保留 UF2 芯片家族 ID；如需继续，请显式启用 discard_metadata");
+const _M0FP318ssjssj183312_2djpg7moonuf27adapter27to__firmware__image_2einnerN6constrS441 = new _M0DTPC16result6ResultGRP418ssjssj183312_2djpg7moonuf26vendor8firmware13FirmwareImageRP318ssjssj183312_2djpg7moonuf27adapter12AdapterErrorE3Err(_M0FP318ssjssj183312_2djpg7moonuf27adapter27to__firmware__image_2einnerN6constrS440);
+const _M0FP318ssjssj183312_2djpg7moonuf27adapter27to__firmware__image_2einnerN6constrS442 = new _M0DTP318ssjssj183312_2djpg7moonuf27adapter12AdapterError12InvalidImage("入口地址超出 32 位地址空间");
+const _M0FP318ssjssj183312_2djpg7moonuf27adapter27to__firmware__image_2einnerN6constrS443 = new _M0DTPC16result6ResultGRP418ssjssj183312_2djpg7moonuf26vendor8firmware13FirmwareImageRP318ssjssj183312_2djpg7moonuf27adapter12AdapterErrorE3Err(_M0FP318ssjssj183312_2djpg7moonuf27adapter27to__firmware__image_2einnerN6constrS442);
+const _M0FP318ssjssj183312_2djpg7moonuf27adapter27to__firmware__image_2einnerN6constrS444 = new _M0DTP318ssjssj183312_2djpg7moonuf27adapter12AdapterError12InvalidImage("镜像包含空数据段");
+const _M0FP318ssjssj183312_2djpg7moonuf27adapter27to__firmware__image_2einnerN6constrS445 = new _M0DTPC16result6ResultGRP418ssjssj183312_2djpg7moonuf26vendor8firmware13FirmwareImageRP318ssjssj183312_2djpg7moonuf27adapter12AdapterErrorE3Err(_M0FP318ssjssj183312_2djpg7moonuf27adapter27to__firmware__image_2einnerN6constrS444);
 const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf213output__bytesN6constrS247 = new _M0DTPC16result6ResultGzsE3Err("io.output_limit: 文本输出超过 --max-bytes 安全上界");
 const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf213output__bytesN6constrS248 = new _M0DTPC16result6ResultGzsE3Err("io.output_limit: UF2 输出超过 --max-bytes 限制");
 const _M0FP418ssjssj183312_2djpg7moonuf23cmd7moonuf213output__bytesN6constrS249 = new _M0DTPC16result6ResultGzsE3Err("adapter.metadata_loss: BIN 不保存芯片家族标识；请明确使用 --discard-metadata");
@@ -3395,6 +3395,9 @@ function _M0FP418ssjssj183312_2djpg7moonuf26vendor8firmware27parse__intel__hex__
   }
   return new _M0DTPC16result6ResultGRP418ssjssj183312_2djpg7moonuf26vendor8firmware16IntelHexDocumentRP418ssjssj183312_2djpg7moonuf26vendor8firmware13FirmwareErrorE2Ok(new _M0TP418ssjssj183312_2djpg7moonuf26vendor8firmware16IntelHexDocument(records, chunks, entry_point));
 }
+function _M0MP418ssjssj183312_2djpg7moonuf26vendor8firmware16IntelHexDocument7records(self) {
+  return _M0MPC15array5Array4copyGRP218ssjssj183312_2djpg7moonuf27SegmentE(self.record_values);
+}
 function _M0MP418ssjssj183312_2djpg7moonuf26vendor8firmware16IntelHexDocument12data__chunks(self) {
   return _M0MPC15array5Array4copyGRP218ssjssj183312_2djpg7moonuf27SegmentE(self.chunk_values);
 }
@@ -4043,11 +4046,11 @@ function _M0MP318ssjssj183312_2djpg7moonuf27adapter12AdapterError7message(self) 
   }
 }
 function _M0FP318ssjssj183312_2djpg7moonuf27adapter12check__range(address, length) {
-  return BigInt.asUintN(64, address) > BigInt.asUintN(64, 4294967295n) || BigInt.asUintN(64, BigInt.asUintN(64, BigInt(length))) > BigInt.asUintN(64, BigInt.asUintN(64, 4294967296n - address)) ? _M0FP318ssjssj183312_2djpg7moonuf27adapter12check__rangeN6constrS420 : new _M0DTPC16result6ResultGuRP318ssjssj183312_2djpg7moonuf27adapter12AdapterErrorE2Ok(undefined);
+  return BigInt.asUintN(64, address) > BigInt.asUintN(64, 4294967295n) || BigInt.asUintN(64, BigInt.asUintN(64, BigInt(length))) > BigInt.asUintN(64, BigInt.asUintN(64, 4294967296n - address)) ? _M0FP318ssjssj183312_2djpg7moonuf27adapter12check__rangeN6constrS433 : new _M0DTPC16result6ResultGuRP318ssjssj183312_2djpg7moonuf27adapter12AdapterErrorE2Ok(undefined);
 }
 function _M0FP318ssjssj183312_2djpg7moonuf27adapter19check__text__budget(text) {
   if (text.length > 16777216) {
-    return _M0FP318ssjssj183312_2djpg7moonuf27adapter19check__text__budgetN6constrS424;
+    return _M0FP318ssjssj183312_2djpg7moonuf27adapter19check__text__budgetN6constrS437;
   }
   let line_length = 0;
   let line_index = 0;
@@ -4097,7 +4100,7 @@ function _M0FP318ssjssj183312_2djpg7moonuf27adapter17normalize__chunks(chunks, e
       }
       const _p = populated;
       const _p$2 = chunk.data_value.length;
-      const _bind$3 = _p$2 > (16777216 - _p | 0) ? _M0FP318ssjssj183312_2djpg7moonuf27adapter19check__byte__budgetN6constrS422 : new _M0DTPC16result6ResultGiRP318ssjssj183312_2djpg7moonuf27adapter12AdapterErrorE2Ok(_p + _p$2 | 0);
+      const _bind$3 = _p$2 > (16777216 - _p | 0) ? _M0FP318ssjssj183312_2djpg7moonuf27adapter19check__byte__budgetN6constrS435 : new _M0DTPC16result6ResultGiRP318ssjssj183312_2djpg7moonuf27adapter12AdapterErrorE2Ok(_p + _p$2 | 0);
       let _tmp$2;
       if (_bind$3.$tag === 0) {
         const _Err = _bind$3;
@@ -4131,7 +4134,7 @@ function _M0FP318ssjssj183312_2djpg7moonuf27adapter29from__firmware__image_2einn
   if (_bind === undefined) {
   } else {
     if (!discard_metadata) {
-      return _M0FP318ssjssj183312_2djpg7moonuf27adapter29from__firmware__image_2einnerN6constrS426;
+      return _M0FP318ssjssj183312_2djpg7moonuf27adapter29from__firmware__image_2einnerN6constrS439;
     }
   }
   const segments = [];
@@ -4145,7 +4148,7 @@ function _M0FP318ssjssj183312_2djpg7moonuf27adapter29from__firmware__image_2einn
       const segment = _bind$2[_];
       const _p = populated;
       const _p$2 = segment.data_value.length;
-      const _bind$4 = _p$2 > (16777216 - _p | 0) ? _M0FP318ssjssj183312_2djpg7moonuf27adapter19check__byte__budgetN6constrS422 : new _M0DTPC16result6ResultGiRP318ssjssj183312_2djpg7moonuf27adapter12AdapterErrorE2Ok(_p + _p$2 | 0);
+      const _bind$4 = _p$2 > (16777216 - _p | 0) ? _M0FP318ssjssj183312_2djpg7moonuf27adapter19check__byte__budgetN6constrS435 : new _M0DTPC16result6ResultGiRP318ssjssj183312_2djpg7moonuf27adapter12AdapterErrorE2Ok(_p + _p$2 | 0);
       let _tmp$2;
       if (_bind$4.$tag === 0) {
         const _Err = _bind$4;
@@ -4176,7 +4179,7 @@ function _M0FP318ssjssj183312_2djpg7moonuf27adapter27to__firmware__image_2einner
   if (_bind === undefined) {
   } else {
     if (!discard_metadata) {
-      return _M0FP318ssjssj183312_2djpg7moonuf27adapter27to__firmware__image_2einnerN6constrS428;
+      return _M0FP318ssjssj183312_2djpg7moonuf27adapter27to__firmware__image_2einnerN6constrS441;
     }
   }
   if (entry_point === undefined) {
@@ -4184,7 +4187,7 @@ function _M0FP318ssjssj183312_2djpg7moonuf27adapter27to__firmware__image_2einner
     const _Some = entry_point;
     const _address = _Some;
     if (BigInt.asUintN(64, _address) > BigInt.asUintN(64, 4294967295n)) {
-      return _M0FP318ssjssj183312_2djpg7moonuf27adapter27to__firmware__image_2einnerN6constrS430;
+      return _M0FP318ssjssj183312_2djpg7moonuf27adapter27to__firmware__image_2einnerN6constrS443;
     }
   }
   const chunks = [];
@@ -4198,7 +4201,7 @@ function _M0FP318ssjssj183312_2djpg7moonuf27adapter27to__firmware__image_2einner
       const segment = _bind$2[index];
       const _p = populated;
       const _p$2 = segment.data.length;
-      const _bind$4 = _p$2 > (16777216 - _p | 0) ? _M0FP318ssjssj183312_2djpg7moonuf27adapter19check__byte__budgetN6constrS422 : new _M0DTPC16result6ResultGiRP318ssjssj183312_2djpg7moonuf27adapter12AdapterErrorE2Ok(_p + _p$2 | 0);
+      const _bind$4 = _p$2 > (16777216 - _p | 0) ? _M0FP318ssjssj183312_2djpg7moonuf27adapter19check__byte__budgetN6constrS435 : new _M0DTPC16result6ResultGiRP318ssjssj183312_2djpg7moonuf27adapter12AdapterErrorE2Ok(_p + _p$2 | 0);
       let _tmp$2;
       if (_bind$4.$tag === 0) {
         const _Err = _bind$4;
@@ -4210,7 +4213,7 @@ function _M0FP318ssjssj183312_2djpg7moonuf27adapter27to__firmware__image_2einner
       }
       populated = _tmp$2;
       if (segment.data.length === 0) {
-        return _M0FP318ssjssj183312_2djpg7moonuf27adapter27to__firmware__image_2einnerN6constrS432;
+        return _M0FP318ssjssj183312_2djpg7moonuf27adapter27to__firmware__image_2einnerN6constrS445;
       }
       const _bind$5 = _M0FP318ssjssj183312_2djpg7moonuf27adapter12check__range(segment.address, segment.data.length);
       if (_bind$5.$tag === 0) {
@@ -4264,14 +4267,45 @@ function _M0FP318ssjssj183312_2djpg7moonuf27adapter29intel__hex__to__image_2einn
     const _Ok = _bind$2;
     document = _Ok._0;
   }
-  const _bind$3 = _M0FP318ssjssj183312_2djpg7moonuf27adapter17normalize__chunks(_M0MP418ssjssj183312_2djpg7moonuf26vendor8firmware16IntelHexDocument12data__chunks(document), document.entry_point_value);
+  let segmented = false;
+  const _bind$3 = _M0MP418ssjssj183312_2djpg7moonuf26vendor8firmware16IntelHexDocument7records(document);
+  const _bind$4 = _bind$3.length;
+  let _tmp = 0;
+  while (true) {
+    const _ = _tmp;
+    if (_ < _bind$4) {
+      const record = _bind$3[_];
+      const _bind$5 = record.record_type_value;
+      switch (_bind$5) {
+        case 2: {
+          segmented = true;
+          break;
+        }
+        case 4: {
+          segmented = false;
+          break;
+        }
+        case 0: {
+          if (segmented && (record.address_value + record.data_value.length | 0) > 65536) {
+            return new _M0DTPC16result6ResultGRP218ssjssj183312_2djpg7moonuf25ImageRP318ssjssj183312_2djpg7moonuf27adapter12AdapterErrorE3Err(new _M0DTP318ssjssj183312_2djpg7moonuf27adapter12AdapterError12InvalidImage(`Intel HEX type 02 数据记录跨越 64 KiB 段偏移边界；请拆分记录，并让跨界部分从偏移 0 继续（源文件第 ${_M0MPC13int3Int18to__string_2einner(record.line_index_value + 1 | 0, 10)} 行）`));
+          }
+          break;
+        }
+      }
+      _tmp = _ + 1 | 0;
+      continue;
+    } else {
+      break;
+    }
+  }
+  const _bind$5 = _M0FP318ssjssj183312_2djpg7moonuf27adapter17normalize__chunks(_M0MP418ssjssj183312_2djpg7moonuf26vendor8firmware16IntelHexDocument12data__chunks(document), document.entry_point_value);
   let image;
-  if (_bind$3.$tag === 0) {
-    const _Err = _bind$3;
+  if (_bind$5.$tag === 0) {
+    const _Err = _bind$5;
     const _error = _Err._0;
     return new _M0DTPC16result6ResultGRP218ssjssj183312_2djpg7moonuf25ImageRP318ssjssj183312_2djpg7moonuf27adapter12AdapterErrorE3Err(_error);
   } else {
-    const _Ok = _bind$3;
+    const _Ok = _bind$5;
     image = _Ok._0;
   }
   return _M0FP318ssjssj183312_2djpg7moonuf27adapter29from__firmware__image_2einner(image, family, discard_metadata);
@@ -4297,7 +4331,7 @@ function _M0FP318ssjssj183312_2djpg7moonuf27adapter26srecord__to__image_2einner(
   if (_bind$3 === undefined) {
   } else {
     if (!discard_metadata) {
-      return _M0FP318ssjssj183312_2djpg7moonuf27adapter26srecord__to__image_2einnerN6constrS434;
+      return _M0FP318ssjssj183312_2djpg7moonuf27adapter26srecord__to__image_2einnerN6constrS447;
     }
   }
   const _bind$4 = _M0FP318ssjssj183312_2djpg7moonuf27adapter17normalize__chunks(_M0MP418ssjssj183312_2djpg7moonuf26vendor8firmware15SRecordDocument12data__chunks(document), document.entry_point_value);
