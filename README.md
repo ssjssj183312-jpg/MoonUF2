@@ -61,6 +61,8 @@ sh scripts/moonuf2 convert app.srec from-srec.uf2 --from srec --to uf2 --discard
 6. UF2 不存入口地址/S-record header，BIN/HEX/Srec 不存 UF2 family。会丢失这些信息的转换默认拒绝，需 `--discard-metadata`；S-record 终止记录始终含入口地址，因此导入也需该选项。导出 Srec 未显式指定入口时，底层写零，此值不是推测的启动入口。库 API 可显式提供新入口；详见 [adapter 文档](adapter/README.md)。
 7. 稀疏空洞没有被声明为真实数据；只有 BIN 展开时才填充。工具不能推断 ELF section、芯片布局、擦除页规则或板级要求，也不保留原始文本排版和记录分块。
 
+8. Intel HEX 的 type 02 段地址模式要求单条数据记录的偏移加长度不超过 65536。跨界记录会提示拆分；段基址为零时也适用。跨界部分应从同一段的偏移 0 开始另写一条记录。type 04 线性地址模式仍允许跨越 64 KiB，32 位地址上限保持原规则。详见 [适配器说明](adapter/README.md)。
+
 ## 库 API
 
 ```moonbit
