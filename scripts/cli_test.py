@@ -189,6 +189,52 @@ def main() -> None:
         cli("convert", "app.srec", "from-srec.uf2", "--from", "srec", "--to", "uf2", "--discard-metadata")
         cli("convert", "from-srec.uf2", "srec-roundtrip.bin", "--from", "uf2", "--to", "bin")
         assert (work / "srec-roundtrip.bin").read_bytes() == data
+        # type 02 的跨段偏移记录必须拒绝；type 04 仍允许线性跨 64 KiB。
+        segment = ":020000021000EC"
+        zero_segment = ":020000020000FC"
+        linear = ":020000040001F9"
+        crossing = ":08FFFC000102030405060708D9"
+        exact_end = ":04FFFC0001020304F7"
+        low_part = ":0400000005060708E2"
+        eof = ":00000001FF"
+        for index, newline in enumerate(["\n", "\r", "\r\n"]):
+            for name, headers in [("segment", [segment]), ("zero", [zero_segment]),
+                                  ("linear-to-segment", [linear, segment])]:
+                source = f"segment-wrap-{name}-{index}.hex"
+                output = f"segment-wrap-{name}-{index}.uf2"
+                (work / source).write_bytes(newline.join([*headers, crossing, eof]).encode("ascii"))
+                cli("verify", source, "--from", "hex", ok=False, contains="adapter.invalid_image")
+                rejected = cli("convert", source, output, "--from", "hex", "--to", "uf2", ok=False,
+                               contains=f"源文件第 {len(headers) + 1} 行")
+                assert "拆分" in rejected.stderr
+                assert not (work / output).exists()
+                assert not list(work.glob(".moonuf2-*")), "段偏移回绕拒绝后残留临时输出"
+        for name, records, address, expected in [
+            ("segment-exact", [segment, exact_end, eof], 0x1FFFC, bytes([1, 2, 3, 4])),
+            ("zero-segment-exact", [zero_segment, exact_end, eof], 0xFFFC, bytes([1, 2, 3, 4])),
+            ("linear-cross", [linear, crossing, eof], 0x1FFFC, bytes(range(1, 9))),
+            ("segment-to-linear", [segment, linear, crossing, eof], 0x1FFFC, bytes(range(1, 9))),
+            ("linear-to-segment-exact", [linear, segment, exact_end, eof], 0x1FFFC, bytes([1, 2, 3, 4])),
+        ]:
+            source = name + ".hex"
+            output = name + ".uf2"
+            (work / source).write_bytes("\n".join(records).encode("ascii"))
+            cli("convert", source, output, "--from", "hex", "--to", "uf2")
+            raw = (work / output).read_bytes()
+            assert int.from_bytes(raw[12:16], "little") == address
+            assert raw[32:32 + len(expected)] == expected
+            cli("verify", output)
+            cli("convert", output, name + ".bin", "--from", "uf2", "--to", "bin")
+            assert (work / (name + ".bin")).read_bytes() == expected
+        (work / "segment-split.hex").write_bytes("\n".join([segment, exact_end, low_part, eof]).encode("ascii"))
+        cli("convert", "segment-split.hex", "segment-split.uf2", "--from", "hex", "--to", "uf2")
+        cli("verify", "segment-split.uf2")
+        split_raw = (work / "segment-split.uf2").read_bytes()
+        assert len(split_raw) == 1024
+        assert int.from_bytes(split_raw[12:16], "little") == 0x10000
+        assert split_raw[32:36] == bytes([5, 6, 7, 8])
+        assert int.from_bytes(split_raw[524:528], "little") == 0x1FFFC
+        assert split_raw[544:548] == bytes([1, 2, 3, 4])
         (work / "sparse.hex").write_text(":0400000001020304F2\n:0400200005060708C2\n:00000001FF\n", encoding="ascii")
         cli("convert", "sparse.hex", "sparse.uf2", "--from", "hex", "--to", "uf2", contains="数据段数量：2")
         cli("convert", "sparse.uf2", "filled.bin", "--from", "uf2", "--to", "bin", "--fill", "0")
